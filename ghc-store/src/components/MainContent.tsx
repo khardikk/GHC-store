@@ -45,11 +45,11 @@ const MainContent: React.FC = () => {
       <div className="px-6 py-8">
         <div className="mb-8">
           <a href="/" className="inline-block hover:opacity-80 transition-opacity">
-            <h2 className="text-3xl font-medium">New year — New you →</h2>
+            <h2 className="text-3xl font-medium font-inter">New year — New you →</h2>
           </a>
         </div>
   
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 font-inter">
           {products.map((product) => (
             <ProductCard
               key={product.id}

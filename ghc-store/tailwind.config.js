@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme');
 export default {
   content: [
     "./index.html",
@@ -9,6 +10,10 @@ export default {
       colors: {
         mainBg: "#DFF756",
         cartBtn:"#4339F2"
+      },
+      fontFamily: {
+        inter: ['Inter', ...defaultTheme.fontFamily.sans],
+        blueCashews: ['BlueCashews', ...defaultTheme.fontFamily.sans],
       },
     },
   },

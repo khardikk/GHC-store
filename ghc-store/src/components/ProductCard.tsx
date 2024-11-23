@@ -19,8 +19,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           className="w-full h-auto"
         />
       </div>
-      <h3 className="font-serif text-xl mb-2 text-center">{title}</h3>
-      <div className="flex items-center justify-center gap-2 mb-3">
+      <h3 className="text-base mb-2 text-center font-blueCashews">{title}</h3>
+      <div className="flex items-center justify-center gap-2 mb-3 text-sm">
         <span className="text-black/60 line-through">₹{originalPrice}</span>
         <span className="font-medium">₹{currentPrice}</span>
       </div>
