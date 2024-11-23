@@ -1,10 +1,10 @@
 import React from 'react';
-import Logo from '../../public/logo.png';
+import Logo from '/logo.png';
 const Navbar: React.FC = () => {
   return (
     <nav className="flex justify-between items-center py-4 px-6 bg-white z-10 relative">
       <div className="flex items-center">
-        <img src={Logo} />
+        <a href='/'><img src={Logo} /></a>
       </div>
       <div>
         <h4 className="text-base font-medium font-inter">CART (4)</h4>
