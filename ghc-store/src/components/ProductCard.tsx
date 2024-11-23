@@ -1,5 +1,6 @@
 import React from 'react';
 import { ProductCardProps } from '../types/product';
+import { urlFor } from '../lib/client';
 
 const ProductCard: React.FC<ProductCardProps> = ({
   title,
@@ -14,9 +15,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <div className="flex flex-col w-full max-w-[280px]">
       <div className="bg-white p-6 rounded-2xl mb-4">
         <img
-          src={image}
+          src={urlFor(image).width(280).url()}
           alt={title}
-          className="w-full h-auto"
+          className="w-full h-auto object-cover"
+          loading="lazy"
         />
       </div>
       <h3 className="text-base mb-2 text-center font-blueCashews">{title}</h3>
