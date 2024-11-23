@@ -2,6 +2,7 @@ import React from 'react';
 import GridLines from 'react-gridlines';
 import Navbar from './components/Navbar';
 import MainContent from './components/MainContent';
+import Footer from  './components/Footer'
 import './App.css'
 
 const App: React.FC = () => {
@@ -19,6 +20,7 @@ const App: React.FC = () => {
             <MainContent />
           </div>
       </main>
+        <Footer/>
         </GridLines>
     </div>
   );
