@@ -66,7 +66,7 @@ const MainContent: React.FC = () => {
   return (
     <div className="px-6 py-8 ">
       {categories.map((category) => (
-        <div key={category._id} className="mb-12">
+        <div key={category._id} className="mb-12 flex flex-col justify-center items-center lg:flex-none lg:justify-normal lg:items-baseline">
           <div className="mb-8">
             <a href={`/category/${category.slug.current}`} className="inline-block hover:opacity-80 transition-opacity">
               <h2 className="text-3xl font-medium font-inter">{category.title} →</h2>
@@ -82,6 +82,7 @@ const MainContent: React.FC = () => {
                 onQuantityChange={(quantity) => handleQuantityChange(product._id, quantity)}
               />
             ))}
+            
           </div>
           <hr className="mt-6 border-gray-800" />
         </div>
