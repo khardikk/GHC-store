@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import MainContent from './components/MainContent';
 import Footer from  './components/Footer'
 import { CartProvider } from './context/CartContext';
+import StickyCart from './components/StickyCart';
 
 import './App.css'
 
@@ -25,6 +26,7 @@ const App: React.FC = () => {
       </main>
         <Footer/>
         </GridLines>
+        <StickyCart />
     </div>
     </CartProvider>
   );
