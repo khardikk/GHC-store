@@ -84,7 +84,7 @@ const MainContent: React.FC = () => {
             ))}
             
           </div>
-          <hr className="mt-6 border-gray-800" />
+          <hr className="mt-6 border-1 border-gray-800 w-full"  />
         </div>
       ))}
     </div>
