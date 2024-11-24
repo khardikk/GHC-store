@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
+import ContentLoader from './ContentLoader';
 import { client } from '../lib/client';
 import { Product, Category } from '../types/product';
 
@@ -7,11 +8,12 @@ const MainContent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [productsByCategory, setProductsByCategory] = useState<{[key: string]: Product[]}>({});
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
-        // Fetch categories ordered by displayOrder
         const categoriesData = await client.fetch<Category[]>(`
           *[_type == "category"] | order(displayOrder asc) {
             _id,
@@ -22,7 +24,6 @@ const MainContent: React.FC = () => {
           }
         `);
 
-        // Updated query to properly reference category
         const productsData = await client.fetch<Product[]>(`
           *[_type == "product"] | order(displayOrder asc) {
             _id,
@@ -32,12 +33,13 @@ const MainContent: React.FC = () => {
             originalPrice,
             currentPrice,
             showAddToCart,
-            category,  // This returns the reference object directly
+            category,
             displayOrder
           }
         `);
 
-        // Group products by category using the _ref property
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         const groupedProducts = productsData.reduce((acc: {[key: string]: Product[]}, product: Product) => {
           if (product.category && product.category._ref) {
             const categoryId = product.category._ref;
@@ -53,6 +55,8 @@ const MainContent: React.FC = () => {
         setProductsByCategory(groupedProducts);
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -63,17 +67,21 @@ const MainContent: React.FC = () => {
     setQuantities(prev => ({ ...prev, [id]: quantity }));
   };
 
+  if (isLoading) {
+    return <ContentLoader />;
+  }
+
   return (
-    <div className="px-6 py-8 ">
+    <div className="px-6 py-8">
       {categories.map((category) => (
-        <div key={category._id} className="mb-12 flex flex-col justify-center items-center lg:flex-none lg:justify-normal lg:items-baseline">
+        <div key={category._id} className="mb-12">
           <div className="mb-8">
             <a href={`/category/${category.slug.current}`} className="inline-block hover:opacity-80 transition-opacity">
-              <h2 className="text-3xl font-medium font-inter">{category.title} →</h2>
+              <h2 className="text-3xl font-medium">{category.title} →</h2>
             </a>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 font-inter">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {productsByCategory[category._id]?.map((product) => (
               <ProductCard
                 key={product._id}
@@ -82,9 +90,8 @@ const MainContent: React.FC = () => {
                 onQuantityChange={(quantity) => handleQuantityChange(product._id, quantity)}
               />
             ))}
-            
           </div>
-          <hr className="mt-6 border-1 border-gray-800 w-full"  />
+          <hr className="mt-6 border-t border-gray-800 w-full" />
         </div>
       ))}
     </div>
@@ -92,3 +99,4 @@ const MainContent: React.FC = () => {
 };
 
 export default MainContent;
+
