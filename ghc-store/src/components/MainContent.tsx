@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import { FreeMode } from 'swiper/modules';
 import ProductCard from './ProductCard';
 import ContentLoader from './ContentLoader';
 import { client } from '../lib/client';
 import { Product, Category } from '../types/product';
+import './MainContent.css';
 
 const MainContent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -74,24 +79,31 @@ const MainContent: React.FC = () => {
   return (
     <div className="px-6 py-8">
       {categories.map((category) => (
-        <div key={category._id} className="mb-12  flex flex-col justify-center items-center md:flex-none md:justify-normal md:items-baseline lg:flex-none lg:justify-normal lg:items-baseline">
+        <div key={category._id} className="mb-12">
           <div className="mb-8">
             <a href={`/category/${category.slug.current}`} className="inline-block hover:opacity-80 transition-opacity">
               <h2 className="text-3xl font-medium">{category.title} →</h2>
             </a>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <Swiper
+            spaceBetween={20}
+            slidesPerView="auto"
+            freeMode={true}
+            modules={[FreeMode]}
+            className="mySwiper"
+          >
             {productsByCategory[category._id]?.map((product) => (
-              <ProductCard
-                key={product._id}
-                {...product}
-                quantity={quantities[product._id] || 1}
-                onQuantityChange={(quantity) => handleQuantityChange(product._id, quantity)}
-              />
+              <SwiperSlide key={product._id} className="!w-auto">
+                <ProductCard
+                  {...product}
+                  quantity={quantities[product._id] || 1}
+                  onQuantityChange={(quantity) => handleQuantityChange(product._id, quantity)}
+                />
+              </SwiperSlide>
             ))}
-          </div>
-          <hr className="mt-6 border-t border-gray-800 w-full" />
+          </Swiper>
+          <hr className="mt-8 border-t border-gray-800 w-full" />
         </div>
       ))}
     </div>
