@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import footerImg from '/footer.png';
+import footerImg from '/footer.svg';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const Footer: React.FC = () => {

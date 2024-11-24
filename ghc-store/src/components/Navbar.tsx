@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo from '/logo.png';
+import Logo from '/logo.svg';
 const Navbar: React.FC = () => {
   return (
     <nav className="flex justify-between items-center py-4 px-6 bg-white z-10 relative">
