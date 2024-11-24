@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-// import 'swiper/css';
+import 'swiper/swiper-bundle.css';
 import { FreeMode } from 'swiper/modules'; 
 import ProductCard from './ProductCard';
 import ContentLoader from './ContentLoader';
