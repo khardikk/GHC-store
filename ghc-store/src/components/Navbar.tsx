@@ -2,7 +2,7 @@ import React from 'react';
 import Logo from '/logo.svg';
 const Navbar: React.FC = () => {
   return (
-    <nav className="flex justify-between items-center py-4 px-6 bg-white z-10 relative">
+    <nav className="flex justify-between items-center py-6 px-6 bg-white z-10 relative">
       <div className="flex items-center">
         <a href='/'><img src={Logo} /></a>
       </div>
