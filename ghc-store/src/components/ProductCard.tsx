@@ -9,7 +9,6 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
   image,
   originalPrice,
   currentPrice,
-  showAddToCart = true,
 }) => {
   const { addToCart, cartItems, updateQuantity } = useCart();
   const cartItem = cartItems.find(item => item._id === _id);
