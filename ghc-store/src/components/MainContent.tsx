@@ -38,7 +38,7 @@ const MainContent: React.FC = () => {
           }
         `);
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         const groupedProducts = productsData.reduce((acc: {[key: string]: Product[]}, product: Product) => {
           if (product.category && product.category._ref) {

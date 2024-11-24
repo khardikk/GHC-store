@@ -7,7 +7,7 @@ const Navbar: React.FC = () => {
         <a href='/'><img src={Logo} /></a>
       </div>
       <div>
-        <h4 className="text-base font-medium font-inter">CART (4)</h4>
+        <h4 className="text-base font-medium font-inter hidden md:block">CART (4)</h4>
       </div>
     </nav>
   );
