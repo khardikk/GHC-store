@@ -3,10 +3,13 @@ import GridLines from 'react-gridlines';
 import Navbar from './components/Navbar';
 import MainContent from './components/MainContent';
 import Footer from  './components/Footer'
+import { CartProvider } from './context/CartContext';
+
 import './App.css'
 
 const App: React.FC = () => {
   return (
+    <CartProvider>
     <div className="min-h-screen flex flex-col bg-mainBg">
       <Navbar />
       <GridLines
@@ -23,6 +26,7 @@ const App: React.FC = () => {
         <Footer/>
         </GridLines>
     </div>
+    </CartProvider>
   );
 };
 
