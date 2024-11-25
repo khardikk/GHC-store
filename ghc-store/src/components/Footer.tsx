@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-base lg:text-3xl font-inter font-bold mb-2">Let's get this Habit Party started!</h1>
-            <p className="text-gray-600 mb-4">Good habits, bad*ss vibes.</p>
+            
           </div>
           <div className="w-24 h-24">
             <div className="rounded-full lg:w-full lg:h-full flex items-center justify-center text-white text-4xl">
@@ -24,6 +24,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Join Button */}
+        <p className="text-gray-600 mb-4">Good habits, bad*ss vibes.</p>
         <button className="w-full bg-blue-600 text-white py-3 rounded-md mb-4 hover:bg-blue-700 transition-colors">
           Join the Club
         </button>
