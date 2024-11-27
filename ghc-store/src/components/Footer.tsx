@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
   return (
     <div className="flex justify-center p-4 w-full h-full font-inter">
       {/* Outer container for controlling width */}
-      <div className="bg-white rounded-lg shadow-lg p-6 w-4/5">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-6 w-full">
         {/* Header Section */}
         <div className="flex justify-between items-start">
           <div>
