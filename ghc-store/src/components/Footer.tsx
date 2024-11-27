@@ -71,9 +71,14 @@ const Footer: React.FC = () => {
         {/* Share Section */}
         <div className="mb-4">
           <h3 className="font-semibold mb-2">Got something to share?</h3>
-          <button className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors">
+          <div className='flex'>
+          <button className="w-4/5 bg-blue-600 text-white py-3 mr-2 rounded-md hover:bg-blue-700 transition-colors">
             Whatsapp Us
           </button>
+          <button className="w-4/5 bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors">
+            Drop a Mail
+          </button>
+          </div>
         </div>
 
         {/* Social Links */}
