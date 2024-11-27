@@ -1,26 +1,37 @@
 import React from 'react';
 import GridLines from 'react-gridlines';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import StickyCart from '../components/StickyCart';
 import Tnc from '../components/Tnc';
-import { useLocation, Routes, Route } from 'react-router-dom';
+import ScrollToTop from '../components/ScrollToTop';
 import MainContent from '../components/MainContent';
 import Terms from '../pages/Terms';
-import ScrollToTop from '../components/ScrollToTop';
+import Privacy from '../pages/Privacy';
+import Contact from '../pages/Contact';
+import Shipping from '../pages/Shipping';
+import Return from '../pages/Return';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
-  const isTermsPage = location.pathname === '/terms'; // Check for /terms page
+ // Define a set of paths that don't require the main layout (like GridLines or Footer)
+ const noGridPages = ['/terms', '/privacy', '/contact', '/shipping', '/returns'];
+
+ const isNoGridPage = noGridPages.includes(location.pathname);
 
   return (
-    <div className={`min-h-screen flex flex-col ${isTermsPage ? '' : 'bg-mainBg'}`}>
+    <div className={`min-h-screen flex flex-col ${isNoGridPage ? '' : 'bg-mainBg'}`}>
       <Navbar />
       <ScrollToTop />
-      {isTermsPage ? (
+      {isNoGridPage  ? (
         <main className="flex-1">
           <Routes>
             <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/shipping" element={<Shipping />} />
+            <Route path="/returns" element={<Return/>} />
           </Routes>
         </main>
       ) : (

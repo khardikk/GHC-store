@@ -5,10 +5,10 @@ import { ArrowUpRight } from 'lucide-react';
 const Tnc: React.FC = () => {
   const legalLinks = [
     { title: 'Terms & Conditions', to: '/terms' },
-    { title: 'Privacy Policy', to: '/terms' },
-    { title: 'Contact Us', to: '/terms' },
-    { title: 'Shipping & Delivery', to: '/terms' },
-    { title: 'Returns & Refund Policy', to: '/terms' },
+    { title: 'Privacy Policy', to: '/privacy' },
+    { title: 'Contact Us', to: '/contact' },
+    { title: 'Shipping & Delivery', to: '/shipping' },
+    { title: 'Returns & Refund Policy', to: '/returns' },
   ];
 
   return (
