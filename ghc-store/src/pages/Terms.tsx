@@ -5,7 +5,7 @@ import Tnc from '../components/Tnc';
 const Terms: React.FC = () => {
   return (
     <div>
-    <div className="min-h-screen bg-white p-8">
+    <div className="min-h-screen bg-white p-4">
       <div className="max-w-4xl mx-auto">
         <div className="border border-gray-200 rounded-lg p-8">
           <h1 className="text-2xl font-bold mb-6 font-inter">Terms and Conditions</h1>
