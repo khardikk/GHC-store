@@ -38,11 +38,11 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
   return (
     <div className="flex flex-col w-full max-w-[280px]">
        <Link to={`/product/${slug.current}`}>
-      <div className="bg-white p-6 rounded-2xl mb-4">
+      <div className="bg-white p-4 rounded-2xl mb-4">
         <img
-          src={urlFor(image).width(280).url()}
+          src={urlFor(image).quality(100).url()}
           alt={title}
-          className="w-full h-auto object-cover"
+          className="w-full h-auto object-cover rounded-lg"
           loading="lazy"
         />
       </div>

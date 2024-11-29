@@ -112,7 +112,7 @@ const ProductDetails: React.FC = () => {
               {displayImages.slice(0, 6).map((img, index) => (
                 <div key={index} className="overflow-hidden">
                   <img
-                    src={urlFor(img).width(400).height(400).url()}
+                    src={urlFor(img).quality(100).url()}
                     alt={`Product Image ${index + 1}`}
                     className="w-full h-full object-contain"
                   />
@@ -122,7 +122,7 @@ const ProductDetails: React.FC = () => {
           </div>
 
           {/* Right side: Product Details */}
-          <div className="product-details md:w-1/3 md:max-h-screen overflow-y-scroll sticky top-10">
+          <div className="product-details md:w-1/3 max-h-full md:max-h-screen overflow-y-scroll sticky top-10">
             <div className="border rounded-xl p-6 space-y-6">
               <div>
                 <h1 className="text-2xl font-medium mb-2">{displayTitle}</h1>
