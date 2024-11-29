@@ -2,6 +2,7 @@ import React from 'react';
 import { ProductCardProps } from '../types/product';
 import { urlFor } from '../lib/client';
 import { useCart } from '../context/CartContext';
+import { Link } from 'react-router-dom';
 
 const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
   _id,
@@ -9,6 +10,7 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
   image,
   originalPrice,
   currentPrice,
+  slug
 }) => {
   const { addToCart, cartItems, updateQuantity } = useCart();
   const cartItem = cartItems.find(item => item._id === _id);
@@ -21,7 +23,10 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
       image,
       originalPrice,
       currentPrice,
-      category: { _ref: '' },
+      category: {
+        _ref: '',
+        title: ''
+      },
     });
   };
 
@@ -32,6 +37,7 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
 
   return (
     <div className="flex flex-col w-full max-w-[280px]">
+       <Link to={`/product/${slug.current}`}>
       <div className="bg-white p-6 rounded-2xl mb-4">
         <img
           src={urlFor(image).width(280).url()}
@@ -40,6 +46,7 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
           loading="lazy"
         />
       </div>
+      </Link>
       <h3 className="text-base mb-2 text-center font-blueCashews">{title}</h3>
       <div className="flex items-center justify-center gap-2 mb-3 text-sm">
         <span className="text-black/60 line-through">₹{originalPrice}</span>

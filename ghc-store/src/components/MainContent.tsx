@@ -141,6 +141,7 @@ const MainContent: React.FC = () => {
                   quantity={quantities[product._id] || 1}
                   onQuantityChange={(quantity) => handleQuantityChange(product._id, quantity)}
                 />
+                
               </SwiperSlide>
             ))}
           </Swiper>

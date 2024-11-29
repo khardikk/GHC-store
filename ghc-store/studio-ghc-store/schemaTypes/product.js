@@ -28,6 +28,45 @@ export default {
       }
     },
     {
+      name: 'additionalImages',
+      title: 'Additional Images',
+      type: 'array',
+      of: [{ type: 'image', options: { hotspot: true } }],
+      description: 'Other images of the product.',
+    },
+    {
+      name: 'variants',
+      title: 'Variants (Colors)',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'colorName',
+              title: 'Color Name',
+              type: 'string',
+              validation: Rule => Rule.required(),
+            },
+            {
+              name: 'colorHex',
+              title: 'Color Hex Code',
+              type: 'string',
+              description: 'Hex code for the color (e.g., #ffffff for white).',
+            },
+            {
+              name: 'variantImages',
+              title: 'Variant Images',
+              type: 'array',
+              of: [{ type: 'image', options: { hotspot: true } }],
+              description: 'Images for this color variant.',
+            },
+          ],
+        },
+      ],
+      description: 'Define different color options for the product.',
+    },
+    {
       name: 'category',
       title: 'Category',
       type: 'reference',
