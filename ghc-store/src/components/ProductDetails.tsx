@@ -186,16 +186,25 @@ const ProductDetails: React.FC = () => {
     ? `${product.title} - ${selectedVariant.colorName}`
     : product.title;
 
-  const getDisplayImages = () => {
-    if (selectedVariant?.variantImages?.length) {
-      return selectedVariant.variantImages;
-    }
-    if (product.additionalImages?.length) {
-      return product.additionalImages;
-    }
-    return product.image ? Array(2).fill(product.image) : [];
-  };
-
+    const getDisplayImages = () => {
+      const images: any[] = [];
+    
+      // Add main image first if it exists
+      if (product.image) {
+        images.push(product.image);
+      }
+    
+      // Add variant images if selected
+      if (selectedVariant?.variantImages?.length) {
+        images.push(...selectedVariant.variantImages);
+      } else if (product.additionalImages?.length) {
+        // Add additional images if no variant is selected
+        images.push(...product.additionalImages);
+      }
+    
+      return images;
+    };
+    
   const displayImages = getDisplayImages();
 
   return (
