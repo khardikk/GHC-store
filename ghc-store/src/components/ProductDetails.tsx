@@ -7,6 +7,7 @@ import Tnc from "./Tnc";
 import Footer from "./Footer";
 import AddToCartButton from "./AddToCartButton";
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import "./ProductDetail.css"
 
 const ProductDetails: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -109,11 +110,11 @@ const ProductDetails: React.FC = () => {
           <div className="md:w-2/3">
             <div className="grid grid-cols-2 gap-4">
               {displayImages.slice(0, 6).map((img, index) => (
-                <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                <div key={index} className="overflow-hidden">
                   <img
                     src={urlFor(img).width(400).height(400).url()}
                     alt={`Product Image ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 </div>
               ))}
@@ -121,7 +122,7 @@ const ProductDetails: React.FC = () => {
           </div>
 
           {/* Right side: Product Details */}
-          <div className="md:w-1/3">
+          <div className="product-details md:w-1/3 md:max-h-screen overflow-y-scroll sticky top-10">
             <div className="border rounded-xl p-6 space-y-6">
               <div>
                 <h1 className="text-2xl font-medium mb-2">{displayTitle}</h1>

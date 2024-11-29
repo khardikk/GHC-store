@@ -1,0 +1,14 @@
+.product-details {
+    overflow-y: scroll;
+    height: 100vh; 
+  }
+  
+  .product-details::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .product-details {
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+  }
+  
