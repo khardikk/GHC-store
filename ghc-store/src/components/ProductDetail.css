@@ -1,6 +1,5 @@
 .product-details {
     overflow-y: scroll;
-    height: 100vh; 
   }
   
   .product-details::-webkit-scrollbar {
