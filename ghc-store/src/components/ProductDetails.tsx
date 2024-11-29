@@ -38,7 +38,6 @@ const ImageModal: React.FC<ImageModalProps> = ({
     preventScrollOnSwipe: true,
     trackMouse: true,
     swipeDuration: 500,
-    minDistance: 50,
   });
 
   return (
