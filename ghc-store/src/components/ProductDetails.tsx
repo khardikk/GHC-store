@@ -109,7 +109,7 @@ const ProductDetails: React.FC = () => {
           {/* Left side: Image Grid */}
           <div className="md:w-2/3">
             <div className="grid grid-cols-2 gap-4">
-              {displayImages.slice(0, 6).map((img, index) => (
+              {displayImages.slice(0, 10).map((img, index) => (
                 <div key={index} className="overflow-hidden">
                   <img
                     src={urlFor(img).quality(100).url()}
