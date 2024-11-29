@@ -1,14 +1,98 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { client, urlFor } from "../lib/client";
-import { Product } from "../types/product";
+import { ImageModalProps, Product } from "../types/product";
 import ContentLoader from "../components/ContentLoader";
 import Tnc from "./Tnc";
 import Footer from "./Footer";
 import AddToCartButton from "./AddToCartButton";
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import "./ProductDetail.css"
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useSwipeable } from 'react-swipeable';
 
+// ImageModal Component
+const ImageModal: React.FC<ImageModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  images, 
+  currentImageIndex, 
+  onPrevious, 
+  onNext 
+}) => {
+  if (!isOpen) return null;
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') onPrevious();
+      if (e.key === 'ArrowRight') onNext();
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [onClose, onPrevious, onNext]);
+
+  // Configure swipe handlers
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => onNext(),
+    onSwipedRight: () => onPrevious(),
+    preventScrollOnSwipe: true,
+    trackMouse: true,
+    swipeDuration: 500,
+    minDistance: 50,
+  });
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+      <button 
+        onClick={onClose}
+        className="absolute top-4 right-4 text-white hover:text-gray-300 z-50"
+      >
+        <X className="w-8 h-8" />
+      </button>
+
+      <button
+        onClick={onPrevious}
+        disabled={currentImageIndex === 0}
+        className="absolute left-4 text-white hover:text-gray-300 disabled:opacity-50 z-50"
+      >
+        <ChevronLeft className="w-8 h-8" />
+      </button>
+
+      {/* Swipeable container */}
+      <div 
+        {...swipeHandlers} 
+        className="w-full h-full flex items-center justify-center touch-pan-y"
+      >
+        <img
+          src={images[currentImageIndex]}
+          alt={`Product view ${currentImageIndex + 1}`}
+          className="max-h-[90vh] max-w-[90vw] object-contain select-none"
+          draggable="false"
+        />
+      </div>
+
+      <button
+        onClick={onNext}
+        disabled={currentImageIndex === images.length - 1}
+        className="absolute right-4 text-white hover:text-gray-300 disabled:opacity-50 z-50"
+      >
+        <ChevronRight className="w-8 h-8" />
+      </button>
+
+      {/* Image counter */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black bg-opacity-50 px-4 py-2 rounded-full">
+        {currentImageIndex + 1} / {images.length}
+      </div>
+
+      {/* Swipe hint - shows only on touch devices */}
+      <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-4 py-2 rounded-full touch-device-only">
+        Swipe to navigate
+      </div>
+    </div>
+  );
+};
+
+// Main ProductDetails Component
 const ProductDetails: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<Product | null>(null);
@@ -18,6 +102,8 @@ const ProductDetails: React.FC = () => {
     variantImages: any[];
   } | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -84,11 +170,23 @@ const ProductDetails: React.FC = () => {
     setSelectedVariant(variant);
   };
 
+  const handleImageClick = (index: number) => {
+    setCurrentImageIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const handlePreviousImage = () => {
+    setCurrentImageIndex((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => Math.min(displayImages.length - 1, prev + 1));
+  };
+
   const displayTitle = selectedVariant
     ? `${product.title} - ${selectedVariant.colorName}`
     : product.title;
 
-  // Get images to display based on selection and availability
   const getDisplayImages = () => {
     if (selectedVariant?.variantImages?.length) {
       return selectedVariant.variantImages;
@@ -96,7 +194,6 @@ const ProductDetails: React.FC = () => {
     if (product.additionalImages?.length) {
       return product.additionalImages;
     }
-    // If no variant images or additional images, create an array with the default image
     return product.image ? Array(2).fill(product.image) : [];
   };
 
@@ -110,11 +207,15 @@ const ProductDetails: React.FC = () => {
           <div className="md:w-2/3">
             <div className="grid grid-cols-2 gap-4">
               {displayImages.slice(0, 10).map((img, index) => (
-                <div key={index} className="overflow-hidden">
+                <div 
+                  key={index} 
+                  className="overflow-hidden cursor-pointer group"
+                  onClick={() => handleImageClick(index)}
+                >
                   <img
                     src={urlFor(img).quality(100).url()}
                     alt={`Product Image ${index + 1}`}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
                   />
                 </div>
               ))}
@@ -200,6 +301,17 @@ const ProductDetails: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Image Modal */}
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        images={displayImages.map(img => urlFor(img).quality(100).url())}
+        currentImageIndex={currentImageIndex}
+        onPrevious={handlePreviousImage}
+        onNext={handleNextImage}
+      />
+
       <Footer />
       <Tnc />
     </div>

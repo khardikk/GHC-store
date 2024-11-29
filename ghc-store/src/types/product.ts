@@ -46,3 +46,12 @@ export interface ProductCardProps extends Omit<Product, 'category' | '_id'> {
   quantity?: number; // Optional quantity for the product
   onQuantityChange?: (quantity: number) => void; // Optional handler for quantity changes
 }
+
+export interface ImageModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  images: string[];
+  currentImageIndex: number;
+  onPrevious: () => void;
+  onNext: () => void;
+}

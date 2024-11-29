@@ -11,3 +11,12 @@
     -ms-overflow-style: none; 
   }
   
+  .touch-device-only {
+    display: none;
+  }
+  
+  @media (hover: none) and (pointer: coarse) {
+    .touch-device-only {
+      display: block;
+    }
+  }
