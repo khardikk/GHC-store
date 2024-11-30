@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';  // Import Link for routing
 import Logo from '/logo.svg';
 import { useCart } from '../context/CartContext';
 
@@ -11,9 +12,9 @@ const Navbar: React.FC = () => {
         <a href='/'><img src={Logo} alt="Logo" /></a>
       </div>
       <div className="flex items-center gap-2">
-        <h4 className="text-base font-medium font-inter hidden md:block">
+        <Link to="/cart" className="text-base font-medium font-inter hidden md:block">
           CART ({getTotalItems()}) - ₹{getTotalPrice().toFixed(2)}
-        </h4>
+        </Link>
       </div>
     </nav>
   );

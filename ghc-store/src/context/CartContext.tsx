@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '../types/product';
 
+
 type CartItem = {
+  slug: {
+    _type: string;
+    current: string;
+  };
   _id: string;
   title: string;
   quantity: number;
@@ -38,6 +43,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [cartItems]);
 
   const addToCart = (product: Product) => {
+    console.log('Product being added to cart:', product);
+    console.log('Product slug:', product.slug);
     setCartItems(prevItems => {
       const existingItem = prevItems.find(i => i._id === product._id);
       if (existingItem) {
@@ -51,8 +58,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         quantity: 1,
         currentPrice: product.currentPrice,
         originalPrice: product.originalPrice,
-        image: product.image,
+        image: product.image, 
+        slug: {
+          _type: 'slug',
+          current: product.slug.current
+        }
       };
+      
       return [...prevItems, newItem];
     });
   };

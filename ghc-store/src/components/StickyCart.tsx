@@ -1,14 +1,17 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import { ArrowRight } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const StickyCart: React.FC = () => {
   const { getTotalItems, getTotalPrice } = useCart();
-
+  const navigate = useNavigate();
+  const location = useLocation();
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
 
-  if (totalItems === 0) return null;
+   // Don't render if on the /cart page
+   if (location.pathname === '/cart' || totalItems === 0) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 p-4 z-50 bg-slate-50">
@@ -21,7 +24,7 @@ const StickyCart: React.FC = () => {
         </div>
         <button
           className="flex items-center gap-2 text-white font-medium hover:opacity-90 transition-opacity"
-          onClick={() => alert('Proceeding to checkout!')}
+          onClick={() => navigate('/cart')}
         >
           CHECKOUT
           <ArrowRight className="w-4 h-4" />
