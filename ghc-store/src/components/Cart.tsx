@@ -4,11 +4,35 @@ import { Link, useNavigate } from 'react-router-dom';
 import { urlFor } from '../lib/client';
 import Footer from './Footer';
 import Tnc from './Tnc';
+import { Product } from '../types/product'; // Make sure this import exists
 
 const Cart: React.FC = () => {
-  const { cartItems, updateQuantity, getTotalPrice } = useCart();
+  const { cartItems, updateQuantity, getTotalPrice, addToCart } = useCart();
   const [localCartItems, setLocalCartItems] = useState(cartItems);
   const navigate = useNavigate();
+
+  // Freebie product definition with required Product type properties
+  const freeProduct: Product = {
+    _id: "2e53572e-eebf-441a-a5e8-5c3e40b1b710",
+    title: "The Little Things",
+    currentPrice: 0,
+    originalPrice: 0,
+    quantity: 1,
+    category: {
+      title: "goodie-box",
+      _ref: "goodie-box-ref"
+    },
+    slug: {
+      current: "the-little-things"
+    },
+    image: {
+      _type: "image",
+      asset: {
+        _ref: "image-cc0eab5be8ae574ca5887198fc21e9180525d606-1024x1024-png",
+        _type: "reference"
+      }
+    }
+  };
 
   useEffect(() => {
     setLocalCartItems(cartItems);
@@ -22,14 +46,20 @@ const Cart: React.FC = () => {
     }
   };
 
-  const handleImageClick = (slug: string) => {
-    navigate(`/product/${slug}`);
+  // const handleImageClick = (slug: string) => {
+  //   navigate(`/product/${slug}`);
+  // };
+
+  const handleAddFreebie = () => {
+    addToCart(freeProduct);
   };
 
   const totalPrice = getTotalPrice();
   const savings = cartItems.reduce((acc, item) => 
     acc + ((item.originalPrice - item.currentPrice) * item.quantity), 0
   );
+
+  const isFreeItemInCart = cartItems.some(item => item._id === freeProduct._id);
 
   if (localCartItems.length === 0) {
     return (
@@ -48,23 +78,41 @@ const Cart: React.FC = () => {
         <h1 className="text-lg font-medium font-inter">You're 🤏 this close to kickstarting those habits!</h1>
         <p className="text-sm text-gray-600 border-b pb-4 font-inter">Here's what you've added to your cart</p>
 
+        {/* Freebie Button */}
+        {!isFreeItemInCart && localCartItems.length > 0 && (
+          <div className="mt-4 mb-4">
+            <button
+              onClick={handleAddFreebie}
+              className="bg-pink-100 text-pink-600 px-4 py-2 rounded-lg hover:bg-pink-200 flex items-center gap-2 transition-all"
+            >
+              <span>🎁</span>
+              Add a free gift!
+            </button>
+          </div>
+        )}
+
         <div className="space-y-4 py-6">
           {localCartItems.map((item) => (
             <div key={item._id} className="flex items-center gap-4 border border-gray-200 rounded-lg p-6">
               <div 
-                onClick={() => handleImageClick(item.slug.current)} 
+                // onClick={() => handleImageClick(item.slug.current)} 
                 className="cursor-pointer hover:opacity-75 transition-opacity"
               >
-                <img
-                  src={urlFor(item.image).url()}
-                  alt={item.title}
-                  className="w-12 h-12 object-cover rounded"
-                />
+                {item.image && item.image.asset && (
+                  <img
+                    src={urlFor(item.image).url()}
+                    alt={item.title}
+                    className="w-12 h-12 object-cover rounded"
+                  />
+                )}
               </div>
               <div className="flex-1">
                 <h3 className="text-sm font-blueCashews">{item.title}</h3>
                 <div className="text-sm text-gray-500">
                   ₹{item.currentPrice}
+                  {item.currentPrice === 0 && (
+                    <span className="ml-2 text-pink-600 text-xs">Free gift! 🎁</span>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-2 border rounded-md">
@@ -114,13 +162,12 @@ const Cart: React.FC = () => {
         <div className="mt-6">
           <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             Checkout
-            </button>
-            </div>
+          </button>
+        </div>
       </div>
       <Footer />
       <Tnc />
     </div>
   );
 };
-
 export default Cart;

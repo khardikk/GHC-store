@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '../types/product';
 
-
 type CartItem = {
   slug: {
     _type: string;
@@ -26,7 +25,6 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialize state from localStorage immediately
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     if (typeof window !== 'undefined') {
       const savedCart = localStorage.getItem('cart');
@@ -35,7 +33,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return [];
   });
 
-  // Save to localStorage whenever cart changes
   useEffect(() => {
     if (cartItems.length > 0 || localStorage.getItem('cart')) {
       localStorage.setItem('cart', JSON.stringify(cartItems));
@@ -43,39 +40,58 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [cartItems]);
 
   const addToCart = (product: Product) => {
-    console.log('Product being added to cart:', product);
-    console.log('Product slug:', product.slug);
+
+
     setCartItems(prevItems => {
       const existingItem = prevItems.find(i => i._id === product._id);
+      
+      // Check if the product is free (price is 0)
+      const isFreeProduct = product.currentPrice === 0;
+      
       if (existingItem) {
+        // For free products, don't increase quantity beyond 1
+        if (isFreeProduct && existingItem.quantity >= 1) {
+          return prevItems;
+        }
+        
+        // For paid products, use the original logic with max quantity of 10
         return prevItems.map(i =>
-          i._id === product._id ? { ...i, quantity: Math.min(10, i.quantity + 1) } : i
+          i._id === product._id 
+            ? { ...i, quantity: Math.min(10, i.quantity + 1) }
+            : i
         );
       }
+
       const newItem: CartItem = {
         _id: product._id,
         title: product.title,
         quantity: 1,
         currentPrice: product.currentPrice,
         originalPrice: product.originalPrice,
-        image: product.image, 
+        image: product.image,
         slug: {
           _type: 'slug',
           current: product.slug.current
         }
       };
-      
+
       return [...prevItems, newItem];
     });
   };
 
   const updateQuantity = (id: string, quantity: number) => {
     setCartItems(prevItems => {
+      const item = prevItems.find(i => i._id === id);
+      
+      // If the item is free, limit quantity to 1
+      if (item && item.currentPrice === 0) {
+        quantity = Math.min(1, quantity);
+      }
+      
       const newItems = prevItems
         .map(item => item._id === id ? { ...item, quantity } : item)
-        .filter(item => item.quantity > 0); // Remove items with quantity 0
-      
-      // Save to localStorage immediately after state change
+        .filter(item => item.quantity > 0);
+
       localStorage.setItem('cart', JSON.stringify(newItems));
       return newItems;
     });
@@ -95,7 +111,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       addToCart,
       updateQuantity,
       getTotalItems,
-      getTotalPrice,
+      getTotalPrice
     }}>
       {children}
     </CartContext.Provider>

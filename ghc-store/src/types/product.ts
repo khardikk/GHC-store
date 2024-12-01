@@ -4,8 +4,10 @@ import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 export interface Product {
   _id: string;
   title: string;
+  quantity?: number; 
   slug: {
     current: string;
+    _type?: string; // Optional if _type is not always needed
   };
   image: SanityImageSource; // Main product image
   originalPrice: number;
@@ -25,6 +27,7 @@ export interface Product {
     variantImages: SanityImageSource[]; // Images specific to this variant
   }[];
 }
+
 
 // Category Interface
 export interface Category {
