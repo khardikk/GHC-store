@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { urlFor } from '../lib/client';
 import Footer from './Footer';
 import Tnc from './Tnc';
@@ -9,7 +9,7 @@ import { Product } from '../types/product'; // Make sure this import exists
 const Cart: React.FC = () => {
   const { cartItems, updateQuantity, getTotalPrice, addToCart } = useCart();
   const [localCartItems, setLocalCartItems] = useState(cartItems);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Freebie product definition with required Product type properties
   const freeProduct: Product = {
