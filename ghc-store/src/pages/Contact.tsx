@@ -24,6 +24,9 @@ const Contact: React.FC = () => {
               <li>
                 <strong>Phone:</strong> <a href="tel:+919019009852" className="text-blue-600 hover:underline">+91 9019009852</a>
               </li>
+              <li>
+                <strong>Operation Address:</strong> 201, House Peru, Sector 2, HSR Layout, Bengaluru, Karnataka – 560102
+              </li>
             </ul>
             <p className="text-sm mt-6">
               We’ll get back to you as soon as possible. Thank you for being a part of the Good Habits Club! 😊

@@ -48,9 +48,17 @@ const Terms: React.FC = () => {
                 <li>We are not responsible for delays caused by the courier or external factors.</li>
               </ul>
             </section>
-
             <section>
-              <h2 className="font-bold mb-2">5. Returns and Refunds</h2>
+              <h2 className="font-bold mb-2">5. General Information</h2>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>These terms govern your use of the Habit Store, including browsing, purchasing, and engaging with our services and the store is represented by Varun Perumalla.</li>
+                <li>Our registered business address is:
+                201, House Peru, Sector 2, HSR Layout, Bengaluru, Karnataka – 560102.</li>
+                <li>We reserve the right to update or modify these terms at any time without prior notice.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="font-bold mb-2">6. Returns and Refunds</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>We do not accept returns once the product has been delivered.</li>
                 <li>Refunds are not applicable unless the product is found to be defective or damaged during transit.</li>
@@ -59,7 +67,7 @@ const Terms: React.FC = () => {
             </section>
 
             <section>
-              <h2 className="font-bold mb-2">6. Privacy and Data</h2>
+              <h2 className="font-bold mb-2">7. Privacy and Data</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>By shopping with us, you consent to the collection and use of your personal information in accordance with our Privacy Policy.</li>
                 <li>We do not share your data with third parties without your consent.</li>
@@ -67,7 +75,7 @@ const Terms: React.FC = () => {
             </section>
 
             <section>
-              <h2 className="font-bold mb-2">7. Liability</h2>
+              <h2 className="font-bold mb-2">8. Liability</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>The GHC Store is not liable for damage or loss caused by misuse of the products purchased.</li>
                 <li>We are not responsible for delays or issues caused by events beyond our control, such as shipping delays or natural disasters.</li>
@@ -75,7 +83,7 @@ const Terms: React.FC = () => {
             </section>
 
             <section>
-              <h2 className="font-bold mb-2">8. Changes to Terms</h2>
+              <h2 className="font-bold mb-2">9. Changes to Terms</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>We reserve the right to modify these Terms and Conditions at any time. Continued use of the site signifies your acceptance of the updated terms.</li>
               </ul>
