@@ -9,7 +9,8 @@ export default {
     extend: {
       colors: {
         mainBg: "#DFF756",
-        cartBtn:"#4339F2"
+        cartBtn:"#4339F2",
+        buttonOrange:"#EF9400"
       },
       fontFamily: {
         inter: ['Inter', ...defaultTheme.fontFamily.sans],
