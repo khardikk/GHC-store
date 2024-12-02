@@ -301,10 +301,10 @@ const ProductDetails: React.FC = () => {
               </div>
 
               {/* Stock Info */}
-              <div className="bg-orange-100 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2">
+              {/* <div className="bg-orange-100 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2">
                 <span>⚠️</span>
                 <span>Last 4 left</span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
