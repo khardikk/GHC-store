@@ -45,7 +45,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ product, maxQuantity 
       ) : (
         <div className="flex items-center justify-between bg-white border border-black/10 rounded-lg overflow-hidden h-[42px] mt-2">
           <button
-            className="px-4 h-full hover:bg-black/5 transition-colors"
+            className="px-4 h-full hover:bg-black/5 transition-colors w-[40%]"
             onClick={() => handleQuantityChange(cartItem.quantity - 1)}
             aria-label="Decrease quantity"
           >
@@ -53,7 +53,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ product, maxQuantity 
           </button>
           <span className="flex-1 text-center font-medium">{cartItem.quantity}</span>
           <button
-            className="px-4 h-full hover:bg-black/5 transition-colors"
+            className="px-4 h-full hover:bg-black/5 transition-colors w-[40%]"
             onClick={() => handleQuantityChange(cartItem.quantity + 1)}
             aria-label="Increase quantity"
           >

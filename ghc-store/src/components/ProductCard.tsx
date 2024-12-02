@@ -68,7 +68,7 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
       ) : (
         <div className="flex items-center justify-between bg-white border border-black/10 rounded-full overflow-hidden h-[42px]">
           <button 
-            className="px-4 h-full hover:bg-black/5 transition-colors"
+            className="px-4 h-full hover:bg-black/5 transition-colors w-[40%]"
             onClick={() => handleQuantityChange(cartItem.quantity - 1)}
             aria-label="Decrease quantity"
           >
@@ -76,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
           </button>
           <span className="flex-1 text-center font-medium">{cartItem.quantity}</span>
           <button 
-            className="px-4 h-full hover:bg-black/5 transition-colors"
+            className="px-4 h-full hover:bg-black/5 transition-colors w-[40%]"
             onClick={() => handleQuantityChange(Math.min(10, cartItem.quantity + 1))}
             aria-label="Increase quantity"
           >
