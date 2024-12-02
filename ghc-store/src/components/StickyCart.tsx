@@ -1,17 +1,17 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import { ArrowRight } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 
 const StickyCart: React.FC = () => {
   const { getTotalItems, getTotalPrice } = useCart();
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
 
-   // Don't render if on the /cart page
-   if (location.pathname === '/cart' || totalItems === 0) return null;
+  //  // Don't render if on the /cart page
+  //  if (location.pathname === '/car' || totalItems === 0) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 p-4 z-50 bg-slate-50">
