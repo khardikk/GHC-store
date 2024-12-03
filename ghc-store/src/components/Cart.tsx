@@ -6,6 +6,7 @@ import Footer from './Footer';
 import Tnc from './Tnc';
 import { Product } from '../types/product';
 import { LockKeyhole} from 'lucide-react';
+import EmptyCart from './EmptyCart';
 
 declare global {
   interface Window {
@@ -125,12 +126,7 @@ const Cart: React.FC = () => {
 
   if (localCartItems.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <h2 className="text-lg font-medium mb-4">Your Cart is Empty</h2>
-        <Link to="/" className="text-blue-600 hover:text-blue-800">
-          Continue Shopping
-        </Link>
-      </div>
+     <EmptyCart/>
     );
   }
 
