@@ -14,6 +14,7 @@ import Shipping from '../pages/Shipping';
 import Return from '../pages/Return';
 import ProductDetails from '../components/ProductDetails';
 import Cart from '../components/Cart';
+import LogoLoader from '../components/LogoLoader';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -44,7 +45,7 @@ const AppLayout: React.FC = () => {
           <main className="flex-1 relative">
             <div className="relative">
               <Routes>
-                <Route path="/" element={<MainContent />} />
+                <Route path="/" element={<LogoLoader><MainContent /></LogoLoader>} />
               </Routes>
             </div>
           </main>

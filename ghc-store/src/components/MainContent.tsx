@@ -8,16 +8,18 @@ import { client } from '../lib/client';
 import { Product, Category } from '../types/product';
 import './MainContent.css';
 
-const CACHE_EXPIRATION_TIME = 1 * 60 * 60 * 1000; // 1 hours in milliseconds
+const CACHE_EXPIRATION_TIME = 1 * 60 * 60 * 1000; // 1 hour in milliseconds
 
 const MainContent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [productsByCategory, setProductsByCategory] = useState<{ [key: string]: Product[] }>({});
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);  // Initialize as true
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);  // Set loading to true on every fetch
+      
       try {
         const now = Date.now();
         const cachedCategories = localStorage.getItem('categories');
@@ -30,60 +32,57 @@ const MainContent: React.FC = () => {
           cacheTimestamp &&
           now - parseInt(cacheTimestamp, 10) < CACHE_EXPIRATION_TIME
         ) {
-          // Use cached data if it hasn't expired
+          // Even with cached data, we'll wait a moment before showing it
+          await new Promise(resolve => setTimeout(resolve, 700));
           setCategories(JSON.parse(cachedCategories));
           setProductsByCategory(JSON.parse(cachedProducts));
-          return;
-        }
-
-        // If cache is expired or not found, fetch fresh data
-        setIsLoading(true);
-        const categoriesData = await client.fetch<Category[]>(`
-          *[_type == "category"] | order(displayOrder asc) {
-            _id,
-            title,
-            slug,
-            description,
-            displayOrder
-          }
-        `);
-
-        const productsData = await client.fetch<Product[]>(`
-          *[_type == "product"] | order(displayOrder asc) {
-            _id,
-            title,
-            slug,
-            image,
-            originalPrice,
-            currentPrice,
-            showAddToCart,
-            category,
-            displayOrder
-          }
-        `);
-
-        const groupedProducts = productsData.reduce(
-          (acc: { [key: string]: Product[] }, product: Product) => {
-            if (product.category && product.category._ref) {
-              const categoryId = product.category._ref;
-              if (!acc[categoryId]) {
-                acc[categoryId] = [];
-              }
-              acc[categoryId].push(product);
+        } else {
+          // Fetch fresh data
+          const categoriesData = await client.fetch<Category[]>(`
+            *[_type == "category"] | order(displayOrder asc) {
+              _id,
+              title,
+              slug,
+              description,
+              displayOrder
             }
-            return acc;
-          },
-          {}
-        );
+          `);
 
-        // Save fetched data to state
-        setCategories(categoriesData);
-        setProductsByCategory(groupedProducts);
+          const productsData = await client.fetch<Product[]>(`
+            *[_type == "product"] | order(displayOrder asc) {
+              _id,
+              title,
+              slug,
+              image,
+              originalPrice,
+              currentPrice,
+              showAddToCart,
+              category,
+              displayOrder
+            }
+          `);
 
-        // Cache data and save the current timestamp
-        localStorage.setItem('categories', JSON.stringify(categoriesData));
-        localStorage.setItem('productsByCategory', JSON.stringify(groupedProducts));
-        localStorage.setItem('cacheTimestamp', now.toString());
+          const groupedProducts = productsData.reduce(
+            (acc: { [key: string]: Product[] }, product: Product) => {
+              if (product.category && product.category._ref) {
+                const categoryId = product.category._ref;
+                if (!acc[categoryId]) {
+                  acc[categoryId] = [];
+                }
+                acc[categoryId].push(product);
+              }
+              return acc;
+            },
+            {}
+          );
+
+          setCategories(categoriesData);
+          setProductsByCategory(groupedProducts);
+
+          localStorage.setItem('categories', JSON.stringify(categoriesData));
+          localStorage.setItem('productsByCategory', JSON.stringify(groupedProducts));
+          localStorage.setItem('cacheTimestamp', now.toString());
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -93,7 +92,6 @@ const MainContent: React.FC = () => {
 
     fetchData();
 
-    // Optional: Periodic cleanup of expired cache
     const interval = setInterval(() => {
       const cacheTimestamp = localStorage.getItem('cacheTimestamp');
       if (cacheTimestamp && Date.now() - parseInt(cacheTimestamp, 10) > CACHE_EXPIRATION_TIME) {
@@ -101,7 +99,6 @@ const MainContent: React.FC = () => {
       }
     }, CACHE_EXPIRATION_TIME);
 
-    // Cleanup the interval on component unmount
     return () => clearInterval(interval);
   }, []);
 
@@ -109,7 +106,6 @@ const MainContent: React.FC = () => {
     setQuantities((prev) => ({ ...prev, [id]: quantity }));
   };
 
-  // Show the loader only when fetching new data for the first time
   if (isLoading) {
     return <ContentLoader />;
   }
@@ -141,7 +137,6 @@ const MainContent: React.FC = () => {
                   quantity={quantities[product._id] || 1}
                   onQuantityChange={(quantity) => handleQuantityChange(product._id, quantity)}
                 />
-                
               </SwiperSlide>
             ))}
           </Swiper>
