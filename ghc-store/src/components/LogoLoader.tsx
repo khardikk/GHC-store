@@ -6,7 +6,7 @@ interface LogoLoaderProps {
   initialDuration?: number;
 }
 
-const LogoLoader: React.FC<LogoLoaderProps> = ({ children, initialDuration = 2000 }) => {
+const LogoLoader: React.FC<LogoLoaderProps> = ({ children, initialDuration = 3000 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
