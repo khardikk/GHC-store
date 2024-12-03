@@ -1,22 +1,22 @@
-.product-details {
-    overflow-y: scroll;
-  }
-  
-  .product-details::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .product-details {
-    scrollbar-width: none; 
-    -ms-overflow-style: none; 
-  }
-  
+.product-details,
+.overflow-y-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.product-details::-webkit-scrollbar,
+.overflow-y-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.touch-device-only {
+  display: none;
+}
+
+
+
+@media (hover: none) and (pointer: coarse) {
   .touch-device-only {
-    display: none;
+    display: block;
   }
-  
-  @media (hover: none) and (pointer: coarse) {
-    .touch-device-only {
-      display: block;
-    }
-  }
+}
