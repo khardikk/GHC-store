@@ -12,7 +12,7 @@ const Tnc: React.FC = () => {
   ];
 
   return (
-    <div className="w-full px-4 py-8 mb-12">
+    <div className="w-full px-4 py-8 mb-24">
       <div className="mx-auto">
         <div className="bg-white rounded-2xl border border-gray-200 p-6 w-full">
           {legalLinks.map((link, index) => (
