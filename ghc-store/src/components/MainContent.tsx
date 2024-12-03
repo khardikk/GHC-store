@@ -14,17 +14,20 @@ const MainContent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [productsByCategory, setProductsByCategory] = useState<{ [key: string]: Product[] }>({});
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
-  const [isLoading, setIsLoading] = useState(true);  // Initialize as true
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true; // Add mounted check
+
     const fetchData = async () => {
-      setIsLoading(true);  // Set loading to true on every fetch
-      
       try {
         const now = Date.now();
         const cachedCategories = localStorage.getItem('categories');
         const cachedProducts = localStorage.getItem('productsByCategory');
         const cacheTimestamp = localStorage.getItem('cacheTimestamp');
+
+        // Always show loader initially
+        await new Promise(resolve => setTimeout(resolve, 900));
 
         if (
           cachedCategories &&
@@ -32,10 +35,10 @@ const MainContent: React.FC = () => {
           cacheTimestamp &&
           now - parseInt(cacheTimestamp, 10) < CACHE_EXPIRATION_TIME
         ) {
-          // Even with cached data, we'll wait a moment before showing it
-          await new Promise(resolve => setTimeout(resolve, 900));
-          setCategories(JSON.parse(cachedCategories));
-          setProductsByCategory(JSON.parse(cachedProducts));
+          if (isMounted) {
+            setCategories(JSON.parse(cachedCategories));
+            setProductsByCategory(JSON.parse(cachedProducts));
+          }
         } else {
           // Fetch fresh data
           const categoriesData = await client.fetch<Category[]>(`
@@ -76,8 +79,10 @@ const MainContent: React.FC = () => {
             {}
           );
 
-          setCategories(categoriesData);
-          setProductsByCategory(groupedProducts);
+          if (isMounted) {
+            setCategories(categoriesData);
+            setProductsByCategory(groupedProducts);
+          }
 
           localStorage.setItem('categories', JSON.stringify(categoriesData));
           localStorage.setItem('productsByCategory', JSON.stringify(groupedProducts));
@@ -86,20 +91,17 @@ const MainContent: React.FC = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchData();
 
-    const interval = setInterval(() => {
-      const cacheTimestamp = localStorage.getItem('cacheTimestamp');
-      if (cacheTimestamp && Date.now() - parseInt(cacheTimestamp, 10) > CACHE_EXPIRATION_TIME) {
-        localStorage.clear();
-      }
-    }, CACHE_EXPIRATION_TIME);
-
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleQuantityChange = (id: string, quantity: number) => {

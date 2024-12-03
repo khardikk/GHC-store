@@ -8,9 +8,15 @@ const LogoLoader: React.FC<LogoLoaderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const isFirstVisit = !localStorage.getItem('hasVisited');
+    const loadingTime = isFirstVisit ? 1000 : 700; // 3s for first visit, 1.5s for subsequent
+
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 500); // 0.5 second delay before sliding up
+      if (isFirstVisit) {
+        localStorage.setItem('hasVisited', 'true');
+      }
+    }, loadingTime);
 
     return () => clearTimeout(timer);
   }, []);
@@ -29,7 +35,7 @@ const LogoLoader: React.FC<LogoLoaderProps> = ({ children }) => {
         }`}
       >
         <div className="w-40 h-40 relative">
-          <img src="./logoLoader.svg" alt="Logo" className="w-full h-full" />
+          <img src="./logoLoader.svg" alt="Logo" className="w-[300px] h-[300px]" />
         </div>
       </div>
     </div>
