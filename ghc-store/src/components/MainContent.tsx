@@ -117,12 +117,12 @@ const MainContent: React.FC = () => {
       {categories.map((category) => (
         <div key={category._id} className="mb-12">
           <div className="mb-8">
-            <a
+            {/* <a
               href={`/category/${category.slug.current}`}
               className="inline-block hover:opacity-80 transition-opacity"
-            >
+            > */}
               <h2 className="text-3xl font-medium font-inter">{category.title}</h2>
-            </a>
+           
           </div>
 
           <Swiper
