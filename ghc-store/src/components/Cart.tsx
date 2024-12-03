@@ -281,7 +281,7 @@ const Cart: React.FC = () => {
           </div>
           <button 
             className="px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 font-inter font-medium"
-            onClick={() => window.location.href = '/shop'}
+            onClick={() => window.location.href = '/'}
           >
             SHOP
           </button>
