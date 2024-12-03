@@ -33,7 +33,7 @@ const MainContent: React.FC = () => {
           now - parseInt(cacheTimestamp, 10) < CACHE_EXPIRATION_TIME
         ) {
           // Even with cached data, we'll wait a moment before showing it
-          await new Promise(resolve => setTimeout(resolve, 700));
+          await new Promise(resolve => setTimeout(resolve, 900));
           setCategories(JSON.parse(cachedCategories));
           setProductsByCategory(JSON.parse(cachedProducts));
         } else {
