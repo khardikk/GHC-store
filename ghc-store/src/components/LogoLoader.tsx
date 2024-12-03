@@ -1,15 +1,19 @@
 import React, { useEffect, useState, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface LogoLoaderProps {
   children: ReactNode;
+  initialDuration?: number;
 }
 
-const LogoLoader: React.FC<LogoLoaderProps> = ({ children }) => {
+const LogoLoader: React.FC<LogoLoaderProps> = ({ children, initialDuration = 2000 }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
+    setIsLoading(true);
     const isFirstVisit = !localStorage.getItem('hasVisited');
-    const loadingTime = isFirstVisit ? 2000 : 1500; // Adjust timing for first and subsequent visits
+    const loadingTime = isFirstVisit ? initialDuration : 1500;
 
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -19,16 +23,14 @@ const LogoLoader: React.FC<LogoLoaderProps> = ({ children }) => {
     }, loadingTime);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [initialDuration, location.pathname]);
 
   return (
     <div className="relative min-h-screen w-full">
-      {/* Main content */}
       <div className={`transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
         {children}
       </div>
 
-      {/* Fullscreen Logo overlay */}
       <div
         className={`fixed inset-0 z-50 bg-white flex items-center justify-center transform transition-transform duration-1000 ease-in-out ${
           isLoading ? 'translate-y-0' : '-translate-y-full'

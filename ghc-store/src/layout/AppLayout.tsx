@@ -31,11 +31,11 @@ const AppLayout: React.FC = () => {
       {isNoGridPage ? (
         <main className="flex-1">
           <Routes>
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/shipping" element={<Shipping />} />
-            <Route path="/returns" element={<Return />} />
+            <Route path="/terms" element={<LogoLoader initialDuration={1000}><Terms /></LogoLoader>} />
+            <Route path="/privacy" element={<LogoLoader initialDuration={500}><Privacy /></LogoLoader>} />
+            <Route path="/contact" element={<LogoLoader initialDuration={500}><Contact /></LogoLoader>} />
+            <Route path="/shipping" element={<LogoLoader initialDuration={500}><Shipping /></LogoLoader>} />
+            <Route path="/returns" element={<LogoLoader initialDuration={500}><Return /></LogoLoader>} />
             <Route path="/product/:slug" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
           </Routes>
