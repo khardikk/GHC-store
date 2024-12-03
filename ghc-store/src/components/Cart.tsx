@@ -270,6 +270,23 @@ const Cart: React.FC = () => {
           ))}
         </div>
 
+
+
+        {/* Forgot Something Section */}
+        <div className="flex justify-between items-center p-6 border rounded-xl">
+          <div>
+            <h2 className=" text-sm  font-blueCashews">Forgot something?</h2>
+            <p className="text-xs text-gray-500 max-w-40 md:max-w-full">Keep shopping,
+              we've save your cart for you.</p>
+          </div>
+          <button 
+            className="px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 font-inter font-medium"
+            onClick={() => window.location.href = '/shop'}
+          >
+            SHOP
+          </button>
+        </div>
+      
         {/* Bill Details */}
         <div className="mt-6">
           <h2 className="font-medium mb-1">Bill Details</h2>
