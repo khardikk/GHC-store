@@ -35,17 +35,17 @@ const Footer: React.FC = () => {
         </a>
 
         {/* About Section */}
-        <div className="mb-4 font-inter">
+        <div className="mb-4 font-inter border-b">
           <button
             className="flex justify-between items-center w-full text-left"
             onClick={() => setIsAboutExpanded(!isAboutExpanded)}
           >
-            <span className="font-medium">What's so cool about us?</span>
+            <span className="font-medium mb-4">What's so cool about us?</span>
             {isAboutExpanded ? <ChevronUp /> : <ChevronDown />}
           </button>
           {isAboutExpanded && (
             <div className="mt-2 text-sm">
-              <ul className="list-disc pl-5 space-y-2 font-inter text-gray-600">
+              <ul className="list-disc pl-5 space-y-2 p-2 font-inter text-gray-600 mb-4">
                 <li>
                   We're a solid community of people with strong intent, started
                   to bring together those of us building good habits and wanting
@@ -67,17 +67,17 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Profits Section */}
-        <div className="mb-4 font-inter">
+        <div className="mb-4 font-inter border-b">
           <button
             className="flex justify-between items-center w-full text-left"
             onClick={() => setIsProfitsExpanded(!isProfitsExpanded)}
           >
-            <span className="font-medium">Are we making profits?</span>
+            <span className="font-medium mb-4">Are we making profits?</span>
             {isProfitsExpanded ? <ChevronUp /> : <ChevronDown />}
           </button>
           {isProfitsExpanded && (
             <div className="mt-2 text-sm">
-              <ul className="list-disc pl-5 space-y-2 text-gray-600">
+              <ul className="list-disc pl-5 space-y-2 text-gray-600 p-2 mb-4">
                 <li>
                   Every little amount we earn from this habit store goes right
                   back into building something bigger for the community.
