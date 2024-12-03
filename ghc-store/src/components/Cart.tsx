@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { Link } from 'react-router-dom';
 import { urlFor } from '../lib/client';
 import Footer from './Footer';
 import Tnc from './Tnc';
