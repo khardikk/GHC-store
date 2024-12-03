@@ -36,7 +36,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ product, maxQuantity 
     <div>
       {!cartItem ? (
         <button
-          className="w-full bg-[#4339F2] text-white py-2 px-4 rounded-lg font-medium text-sm hover:bg-[#3329E2] transition h-[42px]"
+          className="w-full bg-[#4339F2] text-white py-2 px-4 rounded-lg font-medium text-sm hover:bg-[#3329E2] transition h-[50px]"
           onClick={handleAddToCart}
           aria-label={`Add ${product.title} to cart`}
         >

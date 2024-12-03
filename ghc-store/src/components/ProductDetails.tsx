@@ -148,7 +148,7 @@ const ProductDetails: React.FC = () => {
     {
       title: "Product Details",
       content: (
-        <ul className="list-disc pl-5 space-y-1 text-gray-600">
+        <ul className="list-disc pl-5 space-y-1 text-gray-500 text-sm font-normal">
           <li>I'm a software engineer by profession, having worked at...</li>
           <li>A couple of startups, anything code-related is something that I can pick up.</li>
           <li>I'm super into planning for events and organizing them.</li>
@@ -157,11 +157,11 @@ const ProductDetails: React.FC = () => {
     },
     {
       title: "Shipping",
-      content: <p className="text-gray-600">Free shipping for orders over ₹500.</p>,
+      content: <p className="text-gray-500 text-sm font-normal">Free shipping for orders over ₹500.</p>,
     },
     {
       title: "Return Policy",
-      content: <p className="text-gray-600">7-day return policy on unused items.</p>,
+      content: <p className="text-gray-500 text-sm font-normal">7-day return policy on unused items.</p>,
     },
   ];
 
@@ -234,17 +234,17 @@ const ProductDetails: React.FC = () => {
           <div className="product-details md:w-1/3 max-h-full md:max-h-screen scrollbar-hide sticky top-10">
             <div className="border rounded-xl p-6 space-y-6">
               <div>
-                <h1 className="text-2xl font-medium mb-2">{displayTitle}</h1>
+                <h1 className="text-2xl font-medium mb-4 font-blueCashews">{displayTitle}</h1>
                 <div className="flex items-center gap-2">
-                  <span className="line-through text-gray-500">₹{product.originalPrice}</span>
-                  <span className="text-xl font-semibold">₹{product.currentPrice}</span>
+                  <span className="line-through font-inter text-base text-gray-500">₹{product.originalPrice}</span>
+                  <span className="font-inter text-base font-semibold">₹{product.currentPrice}</span>
                 </div>
               </div>
 
               {/* Color Selection */}
               {product.variants && product.variants.length > 0 && (
-                <div>
-                  <p className="font-medium mb-2">Pick a Color</p>
+                <div className="flex">
+                  <p className="font-medium mr-4">Pick a Color</p>
                   <div className="flex gap-3">
                     <button
                       className={`w-6 h-6 rounded-full ${
@@ -277,12 +277,11 @@ const ProductDetails: React.FC = () => {
               {/* Expandable Sections */}
               <div className="space-y-2">
                 {sections.map(({ title, content }) => (
-                  <div key={title} className="border rounded">
+                  <div key={title} className="rounded font-inter font-medium text-base">
                     <button
-                      className={`w-full px-4 py-3 text-left flex justify-between items-center ${
+                      className={`w-full px-4 py-3 text-left flex justify-between items-center border-b ${
                         expandedSection === title
-                          ? "bg-gray-100"
-                          : "hover:bg-gray-50"
+                      
                       }`}
                       onClick={() => setExpandedSection(expandedSection === title ? null : title)}
                     >
@@ -294,7 +293,7 @@ const ProductDetails: React.FC = () => {
                       )}
                     </button>
                     {expandedSection === title && (
-                      <div className="px-4 py-3 border-t">{content}</div>
+                      <div className="px-4 py-3 text-gray-300">{content}</div>
                     )}
                   </div>
                 ))}
