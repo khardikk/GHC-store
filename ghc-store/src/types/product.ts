@@ -1,17 +1,38 @@
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 // Product Interface
+export interface BaseColor {
+  colorName: string;
+  colorHex: string;
+}
+
+export interface Price {
+  original: number;
+  current: number;
+}
+
+export interface ProductVariant {
+  variantId: string;
+  colorName: string;
+  colorHex: string;
+  variantSlug: {
+    current: string;
+  };
+  variantImages: any[];
+  price: Price;
+}
+
 export interface Product {
   _id: string;
   title: string;
   quantity?: number; 
-  slug: {
+  baseSlug: {
     current: string;
     _type?: string; // Optional if _type is not always needed
   };
+  baseColor: BaseColor;
   image: SanityImageSource; // Main product image
-  originalPrice: number;
-  currentPrice: number;
+  defaultPrice: Price;
   showAddToCart?: boolean; // Optional flag for Add to Cart button
   category: {
     title: string;
@@ -21,11 +42,7 @@ export interface Product {
   displayOrder?: number;
 
   // Variants for the product (e.g., color options)
-  variants?: {
-    colorName: string; // Name of the color variant
-    colorHex: string;  // HEX code for the color
-    variantImages: SanityImageSource[]; // Images specific to this variant
-  }[];
+  variants: ProductVariant[];
 }
 
 

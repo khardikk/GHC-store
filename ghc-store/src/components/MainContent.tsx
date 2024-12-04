@@ -8,7 +8,7 @@ import { client } from '../lib/client';
 import { Product, Category } from '../types/product';
 import './MainContent.css';
 
-const CACHE_EXPIRATION_TIME = 1 * 60 * 60 * 1000; // 1 hour in milliseconds
+const CACHE_EXPIRATION_TIME = 1 * 60 * 60 * 1000;
 
 const MainContent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -17,7 +17,7 @@ const MainContent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let isMounted = true; // Add mounted check
+    let isMounted = true;
 
     const fetchData = async () => {
       try {
@@ -26,7 +26,6 @@ const MainContent: React.FC = () => {
         const cachedProducts = localStorage.getItem('productsByCategory');
         const cacheTimestamp = localStorage.getItem('cacheTimestamp');
 
-        // Always show loader initially
         await new Promise(resolve => setTimeout(resolve, 900));
 
         if (
@@ -40,7 +39,6 @@ const MainContent: React.FC = () => {
             setProductsByCategory(JSON.parse(cachedProducts));
           }
         } else {
-          // Fetch fresh data
           const categoriesData = await client.fetch<Category[]>(`
             *[_type == "category"] | order(displayOrder asc) {
               _id,
@@ -50,17 +48,30 @@ const MainContent: React.FC = () => {
               displayOrder
             }
           `);
-
           const productsData = await client.fetch<Product[]>(`
             *[_type == "product"] | order(displayOrder asc) {
               _id,
               title,
-              slug,
+              baseSlug,
+              baseColor {
+                colorName,
+                colorHex
+              },
               image,
-              originalPrice,
-              currentPrice,
+              defaultPrice {
+                original,
+                current
+              },
               showAddToCart,
               category,
+              variants[] {
+                variantId,
+                colorName,
+                colorHex,
+                variantSlug,
+                variantImages,
+                price
+              },
               displayOrder
             }
           `);
@@ -98,31 +109,21 @@ const MainContent: React.FC = () => {
     };
 
     fetchData();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, []);
 
   const handleQuantityChange = (id: string, quantity: number) => {
     setQuantities((prev) => ({ ...prev, [id]: quantity }));
   };
 
-  if (isLoading) {
-    return <ContentLoader />;
-  }
+  if (isLoading) return <ContentLoader />;
 
   return (
     <div className="px-6 py-8">
       {categories.map((category) => (
         <div key={category._id} className="mb-12">
           <div className="mb-8">
-            {/* <a
-              href={`/category/${category.slug.current}`}
-              className="inline-block hover:opacity-80 transition-opacity"
-            > */}
-              <h2 className="text-3xl font-medium font-inter">{category.title}</h2>
-           
+            <h2 className="text-3xl font-medium font-inter">{category.title}</h2>
           </div>
 
           <Swiper
@@ -136,6 +137,7 @@ const MainContent: React.FC = () => {
               <SwiperSlide key={product._id} className="!w-auto">
                 <ProductCard
                   {...product}
+                  slug={product.baseSlug}
                   quantity={quantities[product._id] || 1}
                   onQuantityChange={(quantity) => handleQuantityChange(product._id, quantity)}
                 />

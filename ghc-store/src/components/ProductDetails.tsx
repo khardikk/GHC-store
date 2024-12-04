@@ -1,34 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { client, urlFor } from "../lib/client";
-import { ImageModalProps, Product } from "../types/product";
+import { ImageModalProps, Product, ProductVariant } from "../types/product";
 import ContentLoader from "../components/ContentLoader";
 import Tnc from "./Tnc";
 import Footer from "./Footer";
 import AddToCartButton from "./AddToCartButton";
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { useSwipeable } from 'react-swipeable';
+import {
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from "lucide-react";
+import { useSwipeable } from "react-swipeable";
 
 // ImageModal Component
-const ImageModal: React.FC<ImageModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  images, 
-  currentImageIndex, 
-  onPrevious, 
-  onNext 
+const ImageModal: React.FC<ImageModalProps> = ({
+  isOpen,
+  onClose,
+  images,
+  currentImageIndex,
+  onPrevious,
+  onNext,
 }) => {
   if (!isOpen) return null;
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowLeft') onPrevious();
-      if (e.key === 'ArrowRight') onNext();
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") onPrevious();
+      if (e.key === "ArrowRight") onNext();
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [onClose, onPrevious, onNext]);
 
   // Configure swipe handlers
@@ -42,7 +48,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
-      <button 
+      <button
         onClick={onClose}
         className="absolute top-4 right-4 text-white hover:text-gray-300 z-50"
       >
@@ -58,8 +64,8 @@ const ImageModal: React.FC<ImageModalProps> = ({
       </button>
 
       {/* Swipeable container */}
-      <div 
-        {...swipeHandlers} 
+      <div
+        {...swipeHandlers}
         className="w-full h-full flex items-center justify-center touch-pan-y"
       >
         <img
@@ -96,10 +102,9 @@ const ProductDetails: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedVariant, setSelectedVariant] = useState<{
-    colorName: string;
-    variantImages: any[];
-  } | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    null
+  );
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -109,22 +114,25 @@ const ProductDetails: React.FC = () => {
       try {
         setIsLoading(true);
         const productData = await client.fetch<Product>(
-          `*[_type == "product" && slug.current == $slug][0]{
+          `*[_type == "product" && baseSlug.current == $slug][0]{
             _id,
             title,
-            slug,
+            baseSlug,
+            baseColor,
             image,
             additionalImages,
-            originalPrice,
-            currentPrice,
+            defaultPrice,
             showAddToCart,
             category->{
               title
             },
             variants[] {
+              variantId,
               colorName,
               colorHex,
-              variantImages
+              variantSlug,
+              variantImages,
+              price
             }
           }`,
           { slug }
@@ -150,24 +158,35 @@ const ProductDetails: React.FC = () => {
       content: (
         <ul className="list-disc pl-5 space-y-1 text-gray-500 text-sm font-normal">
           <li>I'm a software engineer by profession, having worked at...</li>
-          <li>A couple of startups, anything code-related is something that I can pick up.</li>
+          <li>
+            A couple of startups, anything code-related is something that I can
+            pick up.
+          </li>
           <li>I'm super into planning for events and organizing them.</li>
         </ul>
       ),
     },
     {
       title: "Shipping",
-      content: <p className="text-gray-500 text-sm font-normal">Free shipping for orders over ₹500.</p>,
+      content: (
+        <p className="text-gray-500 text-sm font-normal">
+          Free shipping for orders over ₹500.
+        </p>
+      ),
     },
     {
       title: "Return Policy",
-      content: <p className="text-gray-500 text-sm font-normal">7-day return policy on unused items.</p>,
+      content: (
+        <p className="text-gray-500 text-sm font-normal">
+          7-day return policy on unused items.
+        </p>
+      ),
     },
   ];
 
-  const handleVariantSelection = (variant: { colorName: string; variantImages: any[] }) => {
-    setSelectedVariant(variant);
-  };
+  // const handleVariantSelection = (variant: { colorName: string; variantImages: any[] }) => {
+  //   setSelectedVariant(variant);
+  // };
 
   const handleImageClick = (index: number) => {
     setCurrentImageIndex(index);
@@ -179,33 +198,36 @@ const ProductDetails: React.FC = () => {
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => Math.min(displayImages.length - 1, prev + 1));
+    setCurrentImageIndex((prev) =>
+      Math.min(displayImages.length - 1, prev + 1)
+    );
   };
 
   const displayTitle = selectedVariant
-    ? `${product.title} - ${selectedVariant.colorName}`
-    : product.title;
+    ? `${product?.title} - ${selectedVariant.colorName}`
+    : product?.title;
 
-    const getDisplayImages = () => {
-      const images: any[] = [];
-    
-      // Add main image first if it exists
-      if (product.image) {
-        images.push(product.image);
-      }
-    
-      // Add variant images if selected
-      if (selectedVariant?.variantImages?.length) {
-        images.push(...selectedVariant.variantImages);
-      } else if (product.additionalImages?.length) {
-        // Add additional images if no variant is selected
-        images.push(...product.additionalImages);
-      }
-    
-      return images;
-    };
-    
+  const getDisplayImages = () => {
+    const images: any[] = [];
+    if (product?.image) {
+      images.push(product.image);
+    }
+    if (selectedVariant?.variantImages?.length) {
+      images.push(...selectedVariant.variantImages);
+    } else if (product?.additionalImages?.length) {
+      images.push(...product.additionalImages);
+    }
+    return images;
+  };
+
   const displayImages = getDisplayImages();
+
+  const currentPrice = selectedVariant
+    ? selectedVariant.price.current
+    : product?.defaultPrice.current;
+  const originalPrice = selectedVariant
+    ? selectedVariant.price.original
+    : product?.defaultPrice.original;
 
   return (
     <div>
@@ -215,8 +237,8 @@ const ProductDetails: React.FC = () => {
           <div className="md:w-2/3">
             <div className="grid grid-cols-2 gap-4">
               {displayImages.slice(0, 10).map((img, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="overflow-hidden cursor-pointer group"
                   onClick={() => handleImageClick(index)}
                 >
@@ -234,10 +256,16 @@ const ProductDetails: React.FC = () => {
           <div className="product-details md:w-1/3 max-h-full md:max-h-screen scrollbar-hide sticky top-10">
             <div className="border rounded-xl p-6 space-y-6">
               <div>
-                <h1 className="text-2xl font-medium mb-4 font-blueCashews">{displayTitle}</h1>
+                <h1 className="text-2xl font-medium mb-4 font-blueCashews">
+                  {displayTitle}
+                </h1>
                 <div className="flex items-center gap-2">
-                  <span className="line-through font-inter text-base text-gray-500">₹{product.originalPrice}</span>
-                  <span className="font-inter text-base font-semibold">₹{product.currentPrice}</span>
+                  <span className="line-through font-inter text-base text-gray-500">
+                    ₹{originalPrice}
+                  </span>
+                  <span className="font-inter text-base font-semibold">
+                    ₹{currentPrice}
+                  </span>
                 </div>
               </div>
 
@@ -248,22 +276,24 @@ const ProductDetails: React.FC = () => {
                   <div className="flex gap-3">
                     <button
                       className={`w-6 h-6 rounded-full ${
-                        !selectedVariant ? "ring-2 ring-blue-500 ring-offset-2" : ""
+                        !selectedVariant
+                          ? "ring-2 ring-blue-500 ring-offset-2"
+                          : ""
                       }`}
-                      style={{ backgroundColor: "#000000" }}
+                      style={{ backgroundColor: product.baseColor.colorHex }}
                       onClick={() => setSelectedVariant(null)}
-                      aria-label="Default Black"
+                      // aria-label="Default Black"
                     />
-                    {product.variants.map((variant, index) => (
+                    {product.variants.map((variant) => (
                       <button
-                        key={index}
+                        key={variant.variantId}
                         className={`w-6 h-6 rounded-full ${
-                          selectedVariant?.colorName === variant.colorName
+                          selectedVariant?.variantId === variant.variantId
                             ? "ring-2 ring-blue-500 ring-offset-2"
                             : ""
                         }`}
                         style={{ backgroundColor: variant.colorHex }}
-                        onClick={() => handleVariantSelection(variant)}
+                        onClick={() => setSelectedVariant(variant)}
                         aria-label={variant.colorName}
                       />
                     ))}
@@ -272,18 +302,30 @@ const ProductDetails: React.FC = () => {
               )}
 
               {/* Add to Cart */}
-              {product.showAddToCart && <AddToCartButton product={product} />}
+              {/* Add to Cart */}
+              {product?.showAddToCart && (
+                <AddToCartButton
+                  product={product}
+                  selectedVariant={selectedVariant || undefined}
+                />
+              )}
 
               {/* Expandable Sections */}
               <div className="space-y-2">
                 {sections.map(({ title, content }) => (
-                  <div key={title} className="rounded font-inter font-medium text-base">
+                  <div
+                    key={title}
+                    className="rounded font-inter font-medium text-base"
+                  >
                     <button
                       className={`w-full px-4 py-3 text-left flex justify-between items-center border-b ${
                         expandedSection === title
-                      
                       }`}
-                      onClick={() => setExpandedSection(expandedSection === title ? null : title)}
+                      onClick={() =>
+                        setExpandedSection(
+                          expandedSection === title ? null : title
+                        )
+                      }
                     >
                       <span className="font-medium">{title}</span>
                       {expandedSection === title ? (
@@ -313,7 +355,7 @@ const ProductDetails: React.FC = () => {
       <ImageModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        images={displayImages.map(img => urlFor(img).quality(100).url())}
+        images={displayImages.map((img) => urlFor(img).quality(100).url())}
         currentImageIndex={currentImageIndex}
         onPrevious={handlePreviousImage}
         onNext={handleNextImage}

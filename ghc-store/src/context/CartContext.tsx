@@ -1,23 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Product } from '../types/product';
+import { Product, ProductVariant } from '../types/product';
 
 type CartItem = {
-  slug: {
-    _type: string;
-    current: string;
-  };
   _id: string;
   title: string;
   quantity: number;
-  currentPrice: number;
   image: any;
-  originalPrice: number;
+  baseSlug: {
+    current: string;
+    _type?: string;
+  };
+  selectedVariant?: ProductVariant;
+  defaultPrice: {
+    original: number;
+    current: number;
+  };
 };
 
 type CartContextType = {
   cartItems: CartItem[];
-  addToCart: (item: Product) => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  addToCart: (product: Product, variant?: ProductVariant) => void;
+  updateQuantity: (id: string, variantId: string | undefined, quantity: number) => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
 };
@@ -39,24 +42,27 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [cartItems]);
 
-  const addToCart = (product: Product) => {
-
-
+  const addToCart = (product: Product, variant?: ProductVariant) => {
     setCartItems(prevItems => {
-      const existingItem = prevItems.find(i => i._id === product._id);
-      
-      // Check if the product is free (price is 0)
-      const isFreeProduct = product.currentPrice === 0;
-      
+      const cartItemId = variant ? `${product._id}-${variant.variantId}` : product._id;
+      const existingItem = prevItems.find(i => 
+        variant 
+          ? i._id === product._id && i.selectedVariant?.variantId === variant.variantId
+          : i._id === product._id && !i.selectedVariant
+      );
+
+      const price = variant ? variant.price : product.defaultPrice;
+      const isFreeProduct = price.current === 0;
+
       if (existingItem) {
-        // For free products, don't increase quantity beyond 1
         if (isFreeProduct && existingItem.quantity >= 1) {
           return prevItems;
         }
-        
-        // For paid products, use the original logic with max quantity of 10
+
         return prevItems.map(i =>
-          i._id === product._id 
+          (variant 
+            ? i._id === product._id && i.selectedVariant?.variantId === variant.variantId
+            : i._id === product._id && !i.selectedVariant)
             ? { ...i, quantity: Math.min(10, i.quantity + 1) }
             : i
         );
@@ -64,32 +70,38 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const newItem: CartItem = {
         _id: product._id,
-        title: product.title,
+        title: product.title + (variant ? ` - ${variant.colorName}` : ''),
         quantity: 1,
-        currentPrice: product.currentPrice,
-        originalPrice: product.originalPrice,
-        image: product.image,
-        slug: {
-          _type: 'slug',
-          current: product.slug.current
-        }
+        image: variant?.variantImages?.[0] || product.image,
+        baseSlug: product.baseSlug,
+        selectedVariant: variant,
+        defaultPrice: price
       };
 
       return [...prevItems, newItem];
     });
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = (id: string, variantId: string | undefined, quantity: number) => {
     setCartItems(prevItems => {
-      const item = prevItems.find(i => i._id === id);
-      
-      // If the item is free, limit quantity to 1
-      if (item && item.currentPrice === 0) {
+      const item = prevItems.find(i => 
+        variantId 
+          ? i._id === id && i.selectedVariant?.variantId === variantId
+          : i._id === id && !i.selectedVariant
+      );
+
+      if (item && item.defaultPrice.current === 0) {
         quantity = Math.min(1, quantity);
       }
-      
+
       const newItems = prevItems
-        .map(item => item._id === id ? { ...item, quantity } : item)
+        .map(item => (
+          (variantId 
+            ? item._id === id && item.selectedVariant?.variantId === variantId
+            : item._id === id && !item.selectedVariant)
+            ? { ...item, quantity }
+            : item
+        ))
         .filter(item => item.quantity > 0);
 
       localStorage.setItem('cart', JSON.stringify(newItems));
@@ -101,9 +113,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.quantity * item.currentPrice), 0);
-  };
+ const getTotalPrice = () => {
+  return cartItems.reduce((total, item) => {
+    const price = item.selectedVariant?.price?.current || 
+                 item.defaultPrice?.current || 
+                 0;
+    return total + (item.quantity * price);
+  }, 0);
+};
 
   return (
     <CartContext.Provider value={{

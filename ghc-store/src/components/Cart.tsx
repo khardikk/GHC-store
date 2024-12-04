@@ -29,37 +29,43 @@ const Cart: React.FC = () => {
   const freeProduct: Product = {
     _id: '2e53572e-eebf-441a-a5e8-5c3e40b1b710',
     title: 'The Little Things',
-    currentPrice: 0,
-    originalPrice: 0,
+    defaultPrice: {
+      current: 0,
+      original: 0
+    },
     quantity: 1,
     category: {
       title: 'goodie-box',
       _ref: 'goodie-box-ref',
     },
-    slug: {
+    baseSlug: {
       current: 'the-little-things',
+    },
+    baseColor: {
+      colorName: 'Default',
+      colorHex: '#000000'
     },
     image: {
       _type: 'image',
       asset: {
-        _ref: 'image-cc0eab5be8ae574ca5887198fc21e9180525d606-1024x1024-png',
+        _ref: 'image-ref',
         _type: 'reference',
       },
     },
+    variants: []
   };
 
   useEffect(() => {
     setLocalCartItems(cartItems);
   }, [cartItems]);
 
-  const handleQuantityChange = (id: string, newQuantity: number) => {
+  const handleQuantityChange = (id: string, variantId: string | undefined, newQuantity: number) => {
     if (newQuantity > 0) {
-      updateQuantity(id, newQuantity);
+      updateQuantity(id, variantId, newQuantity);
     } else {
-      updateQuantity(id, 0);
+      updateQuantity(id, variantId, 0);
     }
   };
-
   const handleAddFreebie = () => {
     addToCart(freeProduct);
   };
@@ -67,7 +73,7 @@ const Cart: React.FC = () => {
   const totalPrice = getTotalPrice();
   const savings = cartItems.reduce(
     (acc, item) =>
-      acc + (item.originalPrice - item.currentPrice) * item.quantity,
+      acc + (item.defaultPrice.original - item.defaultPrice.current) * item.quantity,
     0
   );
 
@@ -239,8 +245,8 @@ const Cart: React.FC = () => {
               <div className="flex-1">
                 <h3 className="text-sm font-blueCashews">{item.title}</h3>
                 <div className="text-sm text-gray-500">
-                  ₹{item.currentPrice}
-                  {item.currentPrice === 0 && (
+                ₹{item.defaultPrice.current}
+                {item.defaultPrice.current === 0 &&  (
                     <span className="ml-2 text-buttonOrange text-xs">
                       Free gift! 
                     </span>
@@ -250,7 +256,11 @@ const Cart: React.FC = () => {
               <div className="flex items-center gap-2 border rounded-md">
                 <button
                   onClick={() =>
-                    handleQuantityChange(item._id, item.quantity - 1)
+                    handleQuantityChange(
+                      item._id,
+                      item.selectedVariant?.variantId,
+                      item.quantity - 1
+                    )
                   }
                   className="px-3 py-1 text-gray-500 hover:bg-gray-50"
                 >
@@ -259,7 +269,10 @@ const Cart: React.FC = () => {
                 <span className="px-2">{item.quantity}</span>
                 <button
                   onClick={() =>
-                    handleQuantityChange(item._id, item.quantity + 1)
+                    handleQuantityChange(
+                      item._id,
+                      item.selectedVariant?.variantId,
+                      item.quantity + 1)
                   }
                   className="px-3 py-1 text-gray-500 hover:bg-gray-50"
                 >

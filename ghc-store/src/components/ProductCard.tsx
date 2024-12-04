@@ -8,9 +8,10 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
   _id,
   title,
   image,
-  originalPrice,
-  currentPrice,
-  slug
+  defaultPrice,
+  baseSlug,
+  baseColor,
+  variants
 }) => {
   const { addToCart, cartItems, updateQuantity } = useCart();
   const cartItem = cartItems.find(item => item._id === _id);
@@ -19,41 +20,41 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
     addToCart({
       _id,
       title,
-      slug: { current: '' },
+      baseSlug,
+      baseColor,
       image,
-      originalPrice,
-      currentPrice,
+      defaultPrice,
       category: {
         _ref: '',
         title: ''
       },
+      variants: variants || []
     });
   };
 
   const handleQuantityChange = (newQuantity: number) => {
-    // Call updateQuantity and remove item if newQuantity is 0
-    updateQuantity(_id, newQuantity);
+    updateQuantity(_id, undefined, newQuantity);
   };
 
   return (
     <div className="flex flex-col w-full max-w-[280px]">
-       <Link to={`/product/${slug.current}`}>
-      <div className="bg-white rounded-2xl mb-4">
-        <img
-          src={urlFor(image).quality(100).url()}
-          alt={title}
-          className="w-full h-auto object-cover rounded-lg"
-          loading="lazy"
-        />
-      </div>
+     <Link to={`/product/${baseSlug?.current || ''}`}>
+        <div className="bg-white rounded-2xl mb-4">
+          <img
+            src={urlFor(image).quality(100).url()}
+            alt={title}
+            className="w-full h-auto object-cover rounded-lg"
+            loading="lazy"
+          />
+        </div>
       </Link>
-      <h3 className="text-base mb-2 text-center font-blueCashews">{title}</h3>
+      <h3 className="text-base mb-2 text-center font-blueCashews">{title || 'GHC Product'}</h3>
       <div className="flex items-center justify-center gap-2 mb-3 text-sm">
-        <span className="text-black/60 line-through">₹{originalPrice}</span>
-        <span className="font-medium">₹{currentPrice}</span>
+        <span className="text-black/60 line-through">    ₹{defaultPrice?.original || 0}</span>
+        <span className="font-medium">  ₹{defaultPrice?.current || 0}</span>
         {cartItem && (
           <span className="font-medium text-[#4339F2]">
-            × {cartItem.quantity} = ₹{(currentPrice * cartItem.quantity).toFixed(2)}
+            × {cartItem.quantity} = ₹{(defaultPrice.current * cartItem.quantity).toFixed(2)}
           </span>
         )}
       </div>

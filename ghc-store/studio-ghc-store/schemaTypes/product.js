@@ -10,14 +10,35 @@ export default {
       validation: Rule => Rule.required()
     },
     {
-      name: 'slug',
-      title: 'Slug',
+      name: 'baseSlug',
+      title: 'Base Slug',
       type: 'slug',
       options: {
         source: 'title',
         maxLength: 96
       },
       validation: Rule => Rule.required()
+    },
+    {
+      name: 'baseColor',
+      title: 'Base Color',
+      type: 'object',
+      fields: [
+        {
+          name: 'colorName',
+          title: 'Color Name',
+          type: 'string',
+          validation: Rule => Rule.required(),
+        },
+        {
+          name: 'colorHex',
+          title: 'Color Hex Code',
+          type: 'string',
+          description: 'Hex code for the base color (e.g., #000000 for black).',
+          validation: Rule => Rule.required(),
+        }
+      ],
+      description: 'Color information for the base product.',
     },
     {
       name: 'image',
@@ -32,7 +53,7 @@ export default {
       title: 'Additional Images',
       type: 'array',
       of: [{ type: 'image', options: { hotspot: true } }],
-      description: 'Other images of the product.',
+      description: 'Additional images for the base product.',
     },
     {
       name: 'variants',
@@ -42,6 +63,18 @@ export default {
         {
           type: 'object',
           fields: [
+            {
+              name: 'variantId',
+              title: 'Variant ID',
+              type: 'string',
+              validation: Rule => Rule.required(),
+            },
+            {
+              name: 'variantTitle',
+              title: 'Variant Title',
+              type: 'string',
+              validation: Rule => Rule.required(),
+            },
             {
               name: 'colorName',
               title: 'Color Name',
@@ -53,18 +86,48 @@ export default {
               title: 'Color Hex Code',
               type: 'string',
               description: 'Hex code for the color (e.g., #ffffff for white).',
+              validation: Rule => Rule.required(),
+            },
+            {
+              name: 'variantSlug',
+              title: 'Variant Slug',
+              type: 'slug',
+              options: {
+                source: (doc, context) => {
+                  const selectedParent = context.parent
+                  return `${selectedParent.variantTitle}`
+                },
+                maxLength: 96
+              },
+              validation: Rule => Rule.required(),
             },
             {
               name: 'variantImages',
               title: 'Variant Images',
               type: 'array',
               of: [{ type: 'image', options: { hotspot: true } }],
-              description: 'Images for this color variant.',
+              description: 'Images specific to this color variant.',
             },
+            {
+              name: 'price',
+              title: 'Variant Price',
+              type: 'object',
+              fields: [
+                {
+                  name: 'original',
+                  title: 'Original Price',
+                  type: 'number',
+                },
+                {
+                  name: 'current',
+                  title: 'Current Price',
+                  type: 'number',
+                }
+              ]
+            }
           ],
         },
       ],
-      description: 'Define different color options for the product.',
     },
     {
       name: 'category',
@@ -74,16 +137,23 @@ export default {
       validation: Rule => Rule.required()
     },
     {
-      name: 'originalPrice',
-      title: 'Original Price',
-      type: 'number',
-      validation: Rule => Rule.required()
-    },
-    {
-      name: 'currentPrice',
-      title: 'Current Price',
-      type: 'number',
-      validation: Rule => Rule.required()
+      name: 'defaultPrice',
+      title: 'Default Price',
+      type: 'object',
+      fields: [
+        {
+          name: 'original',
+          title: 'Original Price',
+          type: 'number',
+          validation: Rule => Rule.required()
+        },
+        {
+          name: 'current',
+          title: 'Current Price',
+          type: 'number',
+          validation: Rule => Rule.required()
+        }
+      ]
     },
     {
       name: 'showAddToCart',
@@ -95,8 +165,6 @@ export default {
       name: 'displayOrder',
       title: 'Display Order',
       type: 'number',
-      description: 'Order in which product appears within its category'
     }
   ]
 }
-
