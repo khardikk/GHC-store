@@ -138,7 +138,7 @@ const Cart: React.FC = () => {
         You're 🤏 this close to kickstarting those habits!
       </h1>
       <p className="text-sm text-gray-600  pb-4">
-        Here's what you've added to your cart
+        Add your details and proceed to payment
       </p>
       </div>
       <div>
@@ -202,7 +202,7 @@ const Cart: React.FC = () => {
             onClick={handleCheckout}
             disabled={!isFormValid || isProcessing}
           >
-            {isProcessing ? 'Processing...' : 'Proceed to Payment top'}
+            {isProcessing ? 'Processing...' : 'Proceed to Payment'}
           </button>
         </div>
       </div>
