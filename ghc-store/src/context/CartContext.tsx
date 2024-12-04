@@ -44,7 +44,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addToCart = (product: Product, variant?: ProductVariant) => {
     setCartItems(prevItems => {
-      const cartItemId = variant ? `${product._id}-${variant.variantId}` : product._id;
+      // const cartItemId = variant ? `${product._id}-${variant.variantId}` : product._id;
       const existingItem = prevItems.find(i => 
         variant 
           ? i._id === product._id && i.selectedVariant?.variantId === variant.variantId
