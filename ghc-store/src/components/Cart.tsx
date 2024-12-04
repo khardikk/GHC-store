@@ -277,7 +277,7 @@ const Cart: React.FC = () => {
           <div>
             <h2 className=" text-sm  font-blueCashews">Forgot something?</h2>
             <p className="text-xs text-gray-500 max-w-40 md:max-w-full">Keep shopping,
-              we've save your cart for you.</p>
+              we've saved your cart for you.</p>
           </div>
           <button 
             className="px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 font-inter font-medium"
