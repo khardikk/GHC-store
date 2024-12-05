@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const defaultTheme = require('tailwindcss/defaultTheme');
+import defaultTheme from 'tailwindcss/defaultTheme';
 export default {
   content: [
     "./index.html",
@@ -9,7 +9,7 @@ export default {
     extend: {
       colors: {
         mainBg: "#DFF756",
-        cartBtn:"#4339F2",
+        cartBtn:"#4339F2", 
         buttonOrange:"#EF9400"
       },
       fontFamily: {
