@@ -4,7 +4,7 @@ import 'swiper/swiper-bundle.css';
 import { FreeMode } from 'swiper/modules';
 import ProductCard from './ProductCard';
 import ContentLoader from './ContentLoader';
-import { client } from '../lib/client';
+import { readClient as client } from '../lib/client';
 import { Product, Category } from '../types/product';
 import './MainContent.css';
 

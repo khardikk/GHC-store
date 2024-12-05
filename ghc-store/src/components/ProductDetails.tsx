@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { client, urlFor } from "../lib/client";
+import { readClient as client, urlFor } from "../lib/client";
 import { ImageModalProps, Product, ProductVariant } from "../types/product";
 import ContentLoader from "../components/ContentLoader";
 import Tnc from "./Tnc";
@@ -245,7 +245,7 @@ const ProductDetails: React.FC = () => {
                   onClick={() => handleImageClick(index)}
                 >
                   <img
-                    src={urlFor(img).quality(100).url()}
+                    src={urlFor(img).quality(80).auto('format').url()}
                     alt={`Product Image ${index + 1}`}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
                   />

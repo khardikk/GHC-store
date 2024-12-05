@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { urlFor } from '../lib/client';
+import { writeClient as client, urlFor } from '../lib/client';
 import Footer from './Footer';
 import Tnc from './Tnc';
 import { Product } from '../types/product';
@@ -17,6 +17,8 @@ const Cart: React.FC = () => {
   const { cartItems, updateQuantity, getTotalPrice, addToCart } = useCart();
   const [localCartItems, setLocalCartItems] = useState(cartItems);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
 
@@ -81,53 +83,117 @@ const Cart: React.FC = () => {
     (item) => item._id === freeProduct._id
   );
 
-  const handleCheckout = () => {
-    try {
-      if (isFormValid) {
-      setIsProcessing(true);
-      const finalAmount = Math.round((totalPrice - savings) * 100); // Convert to paisa
+  // const handleCheckout = () => {
+  //   try {
+  //     if (isFormValid) {
+  //     setIsProcessing(true);
+  //     const finalAmount = Math.round((totalPrice - savings) * 100); // Convert to paisa
       
-      const options = {
-        key: '', // Your test key ID
-        amount: finalAmount,
-        currency: 'INR',
-        name: 'xyz',
-        description: 'Purchase Description',
-        handler: function (response: any) {
-          setIsProcessing(false);
-          // Handle successful payment
-          const { razorpay_payment_id } = response;
-          alert(`Payment Successful! Payment ID: ${razorpay_payment_id}`);
-          // Here you would typically:
-          // 1. Clear the cart
-          // 2. Redirect to a success page
-          // 3. Store the order details
-        },
-        prefill: {
-          name: 'Test User',
-          email: 'test@example.com',
-          contact: '',
-        },
-        theme: {
-          color: '#3399cc',
-        },
-        modal: {
-          ondismiss: function() {
-            setIsProcessing(false);
-          }
-        }
-      };
+  //     const options = {
+  //       key: '', // Your test key ID
+  //       amount: finalAmount,
+  //       currency: 'INR',
+  //       name: 'xyz',
+  //       description: 'Purchase Description',
+  //       handler: function (response: any) {
+  //         setIsProcessing(false);
+  //         // Handle successful payment
+  //         const { razorpay_payment_id } = response;
+  //         alert(`Payment Successful! Payment ID: ${razorpay_payment_id}`);
+  //         // Here you would typically:
+  //         // 1. Clear the cart
+  //         // 2. Redirect to a success page
+  //         // 3. Store the order details
+  //       },
+  //       prefill: {
+  //         name: 'Test User',
+  //         email: 'test@example.com',
+  //         contact: '',
+  //       },
+  //       theme: {
+  //         color: '#3399cc',
+  //       },
+  //       modal: {
+  //         ondismiss: function() {
+  //           setIsProcessing(false);
+  //         }
+  //       }
+  //     };
       
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    }
+  //     const rzp = new window.Razorpay(options);
+  //     rzp.open();
+  //   }
+  //   } catch (error) {
+  //     console.error('Payment initialization failed:', error);
+  //     setIsProcessing(false);
+  //     alert('Unable to initialize payment. Please try again.');
+  //   }
+  // };
+
+  const createOrder = async () => {
+    if (!isFormValid) return;
+    
+    try {
+      setIsProcessing(true);
+      
+      const orderItems = cartItems.map(item => ({
+        _key: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}-${item._id}`, // Add unique key
+        productId: item._id,
+        title: item.title,
+        quantity: item.quantity,
+        variantId: item.selectedVariant?.variantId || null,
+        price: {
+          original: item.defaultPrice.original,
+          current: item.defaultPrice.current
+        }
+      }));
+  
+      const orderData = {
+        _type: 'order',
+        orderId: `ORD-${Date.now()}`,
+        customerName: name,
+        customerPhone: phone,
+        items: orderItems,  // Now includes _key for each item
+        totalAmount: totalPrice,
+        savings: savings,
+        paymentStatus: 'pending',
+        orderDate: new Date().toISOString()
+      };
+  
+      const result = await client.create(orderData);
+      
+      if (result._id) {
+        setOrderId(result._id);
+        setOrderSuccess(true);
+      }
     } catch (error) {
-      console.error('Payment initialization failed:', error);
+      console.error('Error creating order:', error);
+      alert('Unable to create order. Please try again.');
+    } finally {
       setIsProcessing(false);
-      alert('Unable to initialize payment. Please try again.');
     }
   };
+  const handleCheckout = createOrder;
+
+  if (orderSuccess && orderId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-lg text-center">
+          <div className="mb-6">
+            <h1 className="text-2xl font-medium text-gray-900 mb-2">Order Created Successfully!</h1>
+            <p className="text-gray-600">Order ID: {orderId}</p>
+          </div>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Continue Shopping
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (localCartItems.length === 0) {
     return (

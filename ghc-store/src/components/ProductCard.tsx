@@ -41,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
      <Link to={`/product/${baseSlug?.current || ''}`}>
         <div className="bg-white rounded-2xl mb-4">
           <img
-            src={urlFor(image).quality(100).url()}
+            src={urlFor(image).quality(80).url()}
             alt={title}
             className="w-full h-auto object-cover rounded-lg"
             loading="lazy"
