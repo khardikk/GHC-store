@@ -36,7 +36,7 @@ const LogoLoader: React.FC<LogoLoaderProps> = ({ children, initialDuration = 300
           isLoading ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
-        <div className="w-40 h-40 relative">
+        <div className="w-[300px] h-[300px] relative">
           <img src="./logoLoader.svg" alt="Logo" className="w-[300px] h-[300px] animate-bounce" />
         </div>
       </div>
