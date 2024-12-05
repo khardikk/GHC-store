@@ -48,7 +48,7 @@ const Cart: React.FC = () => {
     image: {
       _type: 'image',
       asset: {
-        _ref: 'image-ref',
+        _ref: 'image-cc0eab5be8ae574ca5887198fc21e9180525d606-1024x1024-png',
         _type: 'reference',
       },
     },
