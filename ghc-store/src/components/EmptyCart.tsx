@@ -12,7 +12,7 @@ const EmptyCart = () => {
         </p>
         <Link 
           to="/" 
-          className="bg-blue-500 text-white px-6 py-2 rounded-full font-medium hover:bg-blue-600 transition-colors"
+          className="bg-blue-500 text-white px-6 py-2 rounded-full font-medium hover:bg-blue-600 transition-colors flex items-center justify-center text-sm md:text-lg"
         >
           CONTINUE SHOPPING
         </Link>
