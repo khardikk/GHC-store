@@ -136,7 +136,8 @@ const Cart: React.FC = () => {
     
     try {
       setIsProcessing(true);
-      
+        // Debug token presence
+    console.log('Token exists:', !!import.meta.env.VITE_SANITY_TOKEN);
       const orderItems = cartItems.map(item => ({
         _key: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}-${item._id}`, // Add unique key
         productId: item._id,
@@ -147,6 +148,7 @@ const Cart: React.FC = () => {
           original: item.defaultPrice.original,
           current: item.defaultPrice.current
         }
+        
       }));
   
       const orderData = {
