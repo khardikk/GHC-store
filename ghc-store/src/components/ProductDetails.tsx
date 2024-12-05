@@ -207,18 +207,20 @@ const ProductDetails: React.FC = () => {
     ? `${product?.title} - ${selectedVariant.colorName}`
     : product?.title;
 
-  const getDisplayImages = () => {
-    const images: any[] = [];
-    if (product?.image) {
-      images.push(product.image);
-    }
-    if (selectedVariant?.variantImages?.length) {
-      images.push(...selectedVariant.variantImages);
-    } else if (product?.additionalImages?.length) {
-      images.push(...product.additionalImages);
-    }
-    return images;
-  };
+    const getDisplayImages = () => {
+      if (selectedVariant?.variantImages?.length) {
+        return selectedVariant.variantImages;
+      }
+      
+      const images: any[] = [];
+      if (product?.image) {
+        images.push(product.image);
+      }
+      if (product?.additionalImages?.length) {
+        images.push(...product.additionalImages);
+      }
+      return images;
+    };
 
   const displayImages = getDisplayImages();
 
