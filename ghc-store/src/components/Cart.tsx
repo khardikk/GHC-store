@@ -19,12 +19,8 @@ const Cart: React.FC = () => {
   const { cartItems, updateQuantity, getTotalPrice, addToCart, clearCart } = useCart();
   const [localCartItems, setLocalCartItems] = useState(cartItems);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState(false);
-  const [orderId, setOrderId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [paymentId, setPaymentId] = useState("");
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
@@ -177,26 +173,6 @@ const Cart: React.FC = () => {
     }
   };
 
-  if (orderSuccess && orderId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-lg text-center">
-          <div className="mb-6">
-            <h1 className="text-2xl font-medium text-gray-900 mb-2">
-              Order Created Successfully!
-            </h1>
-            <p className="text-gray-600">Order ID: {orderId}</p>
-          </div>
-          <button
-            onClick={() => (window.location.href = "/")}
-            className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Continue Shopping
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   if (localCartItems.length === 0) {
     return <EmptyCart />;
@@ -419,41 +395,14 @@ const Cart: React.FC = () => {
           </div>
         </div>
 
-        {/* Checkout Button Bottom*/}
-        {/* <div className="md:flex  md:mt-6 mt-4 md:justify-center flex-col">
-          <button
-            className={`w-full md:w-auto px-4 py-2 rounded-lg text-white ${
-              isFormValid
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-gray-300 cursor-not-allowed'
-            }`}
-            onClick={handleCheckout}
-            disabled={!isFormValid || isProcessing}
-          >
-            {isProcessing ? 'Processing...' : 'Proceed to Payment'}
-          </button>
-          
-        </div> */}
       </div>
       <Footer />
       <Tnc />
-      {/* {showSuccessModal && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg max-w-md w-full m-4">
-      <div className="mb-4 text-center">
-        <h2 className="text-2xl font-semibold mb-2">Payment Successful! 🎉</h2>
-        <p className="text-gray-600">Your order has been placed successfully.</p>
-        <p className="text-sm text-gray-500 mt-2">Payment ID: {paymentId}</p>
-      </div>
-      <button
-        onClick={() => window.location.href = '/'}
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        Continue Shopping
-      </button>
-    </div>
+      {error && (
+  <div className="text-red-500 text-sm mb-4">
+    {error}
   </div>
-)} */}
+)}
     </div>
   );
 };
