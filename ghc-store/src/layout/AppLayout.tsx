@@ -15,12 +15,13 @@ import Return from '../pages/Return';
 import ProductDetails from '../components/ProductDetails';
 import Cart from '../components/Cart';
 import LogoLoader from '../components/LogoLoader';
+import OrderConfirmation from '../components/OrderConfirm';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
 
   // Define a set of paths that don't require the main layout (like GridLines or Footer)
-  const noGridPages = ['/terms', '/privacy', '/contact', '/shipping', '/returns', '/product/:slug', '/cart'];
+  const noGridPages = ['/terms', '/privacy', '/contact', '/shipping', '/returns', '/product/:slug', '/cart', '/confirm'];
 
   const isNoGridPage = noGridPages.includes(location.pathname) || location.pathname.startsWith('/product/');
 
@@ -38,6 +39,7 @@ const AppLayout: React.FC = () => {
             <Route path="/returns" element={<LogoLoader initialDuration={500}><Return /></LogoLoader>} />
             <Route path="/product/:slug" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/confirm" element={<OrderConfirmation />} />
           </Routes>
         </main>
       ) : (

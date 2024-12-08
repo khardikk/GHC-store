@@ -41,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
      <Link to={`/product/${baseSlug?.current || ''}`}>
         <div className="bg-white rounded-2xl mb-4">
           <img
-            src={urlFor(image).quality(80).url()}
+            src={urlFor(image).quality(60).url()}
             alt={title}
             className="w-full h-auto object-cover rounded-lg"
             loading="lazy"
@@ -52,11 +52,11 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
       <div className="flex items-center justify-center gap-2 mb-3 text-sm">
         <span className="text-black/60 line-through">    ₹{defaultPrice?.original || 0}</span>
         <span className="font-medium">  ₹{defaultPrice?.current || 0}</span>
-        {cartItem && (
-          <span className="font-medium text-[#4339F2]">
-            × {cartItem.quantity} = ₹{(defaultPrice.current * cartItem.quantity).toFixed(2)}
-          </span>
-        )}
+        {/* {cartItem && (
+          // <span className="font-medium text-[#4339F2]">
+          //   × {cartItem.quantity} = ₹{(defaultPrice.current * cartItem.quantity).toFixed(2)}
+          // </span>
+        )} */}
       </div>
       {!cartItem ? (
         <button 

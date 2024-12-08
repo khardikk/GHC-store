@@ -4,8 +4,13 @@ export default {
     type: 'document',
     fields: [
       {
-        name: 'orderId',
-        title: 'Order ID',
+        name: 'razorpayOrderId',
+        title: 'Razorpay Order ID',
+        type: 'string',
+      },
+      {
+        name: 'razorpayPaymentId',
+        title: 'Razorpay Payment ID',
         type: 'string',
       },
       {
@@ -46,23 +51,6 @@ export default {
                 title: 'Variant ID',
                 type: 'string'
               },
-              {
-                name: 'price',
-                title: 'Price',
-                type: 'object',
-                fields: [
-                  {
-                    name: 'original',
-                    title: 'Original Price',
-                    type: 'number'
-                  },
-                  {
-                    name: 'current',
-                    title: 'Current Price',
-                    type: 'number'
-                  }
-                ]
-              }
             ]
           }
         ]

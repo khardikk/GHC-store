@@ -1,8 +1,7 @@
-// client.ts
 import sanityClient from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
 
-// Read client with CDN for fetching data
+// Read client with CDN
 export const readClient = sanityClient({
   projectId: import.meta.env.VITE_SANITY_PROJECT,
   dataset: import.meta.env.VITE_SANITY_DATASET,
@@ -10,7 +9,7 @@ export const readClient = sanityClient({
   useCdn: true
 });
 
-// Write client without CDN for mutations
+// Write client without CDN
 export const writeClient = sanityClient({
   projectId: import.meta.env.VITE_SANITY_PROJECT,
   dataset: import.meta.env.VITE_SANITY_DATASET,

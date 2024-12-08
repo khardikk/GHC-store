@@ -4,17 +4,28 @@ import { ArrowRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const StickyCart: React.FC = () => {
-  const { getTotalItems, getTotalPrice } = useCart();
+  const { getTotalItems, getTotalPrice, cartItems } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
-
-  // Don't render if there are no items
+ 
+  const savings = cartItems.reduce(
+    (acc, item) => acc + (item.defaultPrice.original - item.defaultPrice.current) * item.quantity,
+    0
+  );
+ 
+  const finalPrice = totalPrice - savings;
+ 
   if (totalItems === 0) return null;
-
+ 
   const isCartPage = location.pathname === '/cart';
 
+  const scrollToForm = () => {
+    const formElement = document.querySelector('#checkout-form');
+    formElement?.scrollIntoView({ behavior: 'smooth' });
+  };
+  
   return (
     <div className="fixed bottom-0 left-0 right-0 p-4 z-20 bg-slate-50">
       <div className="bg-[#4339F2] rounded-2xl px-6 py-4 flex items-center justify-between mx-auto border border-black/10">
@@ -22,11 +33,11 @@ const StickyCart: React.FC = () => {
           <span className="font-medium">
             {totalItems} item{totalItems > 1 ? 's' : ''}
           </span>
-          <span className="font-medium">₹{totalPrice.toFixed(0)}</span>
+          <span className="font-medium">₹{finalPrice.toFixed(0)}</span>
         </div>
         <button
           className="flex items-center gap-2 text-white font-medium hover:opacity-90 transition-opacity"
-          onClick={() => navigate(isCartPage ? '/payment' : '/cart')}
+          onClick={() => isCartPage ? scrollToForm() : navigate('/cart')}
         >
           {isCartPage ? 'CHECKOUT' : 'CART'}
           <ArrowRight className="w-4 h-4" />
@@ -34,6 +45,6 @@ const StickyCart: React.FC = () => {
       </div>
     </div>
   );
-};
+ };
 
 export default StickyCart;

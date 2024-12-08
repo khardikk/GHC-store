@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useCart } from '../context/CartContext';
-import { writeClient as client, urlFor } from '../lib/client';
-import Footer from './Footer';
-import Tnc from './Tnc';
-import { Product } from '../types/product';
-import { LockKeyhole} from 'lucide-react';
-import EmptyCart from './EmptyCart';
+import React, { useEffect, useState } from "react";
+import { useCart } from "../context/CartContext";
+import { urlFor } from "../lib/client";
+import Footer from "./Footer";
+import Tnc from "./Tnc";
+import { Product } from "../types/product";
+import { Loader2, LockKeyhole } from "lucide-react";
+import EmptyCart from "./EmptyCart";
+import { useNavigate } from "react-router-dom";
+import { secureRequest } from "../utils/auth";
 
 declare global {
   interface Window {
@@ -14,13 +16,17 @@ declare global {
 }
 
 const Cart: React.FC = () => {
-  const { cartItems, updateQuantity, getTotalPrice, addToCart } = useCart();
+  const { cartItems, updateQuantity, getTotalPrice, addToCart, clearCart } = useCart();
   const [localCartItems, setLocalCartItems] = useState(cartItems);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [paymentId, setPaymentId] = useState("");
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
   // Validation
   const isNameValid = /^[a-zA-Z\s'-]{2,50}$/.test(name.trim());
@@ -29,39 +35,43 @@ const Cart: React.FC = () => {
 
   // Freebie product definition
   const freeProduct: Product = {
-    _id: '2e53572e-eebf-441a-a5e8-5c3e40b1b710',
-    title: 'The Little Things',
+    _id: "2e53572e-eebf-441a-a5e8-5c3e40b1b710",
+    title: "The Little Things",
     defaultPrice: {
       current: 0,
-      original: 0
+      original: 0,
     },
     quantity: 1,
     category: {
-      title: 'goodie-box',
-      _ref: 'goodie-box-ref',
+      title: "goodie-box",
+      _ref: "goodie-box-ref",
     },
     baseSlug: {
-      current: 'the-little-things',
+      current: "the-little-things",
     },
     baseColor: {
-      colorName: 'Default',
-      colorHex: '#000000'
+      colorName: "Default",
+      colorHex: "#000000",
     },
     image: {
-      _type: 'image',
+      _type: "image",
       asset: {
-        _ref: 'image-cc0eab5be8ae574ca5887198fc21e9180525d606-1024x1024-png',
-        _type: 'reference',
+        _ref: "image-cc0eab5be8ae574ca5887198fc21e9180525d606-1024x1024-png",
+        _type: "reference",
       },
     },
-    variants: []
+    variants: [],
   };
 
   useEffect(() => {
     setLocalCartItems(cartItems);
   }, [cartItems]);
 
-  const handleQuantityChange = (id: string, variantId: string | undefined, newQuantity: number) => {
+  const handleQuantityChange = (
+    id: string,
+    variantId: string | undefined,
+    newQuantity: number
+  ) => {
     if (newQuantity > 0) {
       updateQuantity(id, variantId, newQuantity);
     } else {
@@ -75,7 +85,8 @@ const Cart: React.FC = () => {
   const totalPrice = getTotalPrice();
   const savings = cartItems.reduce(
     (acc, item) =>
-      acc + (item.defaultPrice.original - item.defaultPrice.current) * item.quantity,
+      acc +
+      (item.defaultPrice.original - item.defaultPrice.current) * item.quantity,
     0
   );
 
@@ -83,109 +94,101 @@ const Cart: React.FC = () => {
     (item) => item._id === freeProduct._id
   );
 
-  // const handleCheckout = () => {
-  //   try {
-  //     if (isFormValid) {
-  //     setIsProcessing(true);
-  //     const finalAmount = Math.round((totalPrice - savings) * 100); // Convert to paisa
-      
-  //     const options = {
-  //       key: '', // Your test key ID
-  //       amount: finalAmount,
-  //       currency: 'INR',
-  //       name: 'xyz',
-  //       description: 'Purchase Description',
-  //       handler: function (response: any) {
-  //         setIsProcessing(false);
-  //         // Handle successful payment
-  //         const { razorpay_payment_id } = response;
-  //         alert(`Payment Successful! Payment ID: ${razorpay_payment_id}`);
-  //         // Here you would typically:
-  //         // 1. Clear the cart
-  //         // 2. Redirect to a success page
-  //         // 3. Store the order details
-  //       },
-  //       prefill: {
-  //         name: 'Test User',
-  //         email: 'test@example.com',
-  //         contact: '',
-  //       },
-  //       theme: {
-  //         color: '#3399cc',
-  //       },
-  //       modal: {
-  //         ondismiss: function() {
-  //           setIsProcessing(false);
-  //         }
-  //       }
-  //     };
-      
-
-  //     const rzp = new window.Razorpay(options);
-  //     rzp.open();
-  //   }
-  //   } catch (error) {
-  //     console.error('Payment initialization failed:', error);
-  //     setIsProcessing(false);
-  //     alert('Unable to initialize payment. Please try again.');
-  //   }
-  // };
-
-  const createOrder = async () => {
-    if (!isFormValid) return;
-    
+  const handleCheckout = async () => {
+    setError(null);
     try {
       setIsProcessing(true);
-      
-      const orderItems = cartItems.map(item => ({
-        _key: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}-${item._id}`, // Add unique key
-        productId: item._id,
-        title: item.title,
-        quantity: item.quantity,
-        variantId: item.selectedVariant?.variantId || null,
-        price: {
-          original: item.defaultPrice.original,
-          current: item.defaultPrice.current
-        }
-      }));
-  
+
       const orderData = {
-        _type: 'order',
-        orderId: `ORD-${Date.now()}`,
+        amount: totalPrice - savings,
         customerName: name,
         customerPhone: phone,
-        items: orderItems,  // Now includes _key for each item
-        totalAmount: totalPrice,
-        savings: savings,
-        paymentStatus: 'pending',
-        orderDate: new Date().toISOString()
+        items: cartItems.map((item) => ({
+          productId: item._id,
+          title: item.title,
+          quantity: item.quantity,
+          price: {
+            current: item.defaultPrice.current,
+            original: item.defaultPrice.original,
+          },
+        })),
       };
-  
-      const result = await client.create(orderData);
-      
-      if (result._id) {
-        setOrderId(result._id);
-        setOrderSuccess(true);
-      }
+
+      const { orderId, sanityOrderId } = await secureRequest(
+        "/api/razorpay/create-order",
+        orderData
+      );
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: Math.round((totalPrice - savings) * 100),
+        currency: "INR",
+        name: "GHC Store",
+        description: "Purchase Payment",
+        order_id: orderId,
+        handler: async (response: {
+          razorpay_payment_id: string;
+          razorpay_order_id: string;
+          razorpay_signature: string;
+        }) => {
+          await handlePaymentSuccess(response, sanityOrderId);
+        },
+        prefill: {
+          name,
+          contact: phone,
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
-      console.error('Error creating order:', error);
-      alert('Unable to create order. Please try again.');
-    } finally {
+      console.error("Checkout failed:", error);
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Payment failed. Please try again."
+      );
       setIsProcessing(false);
     }
   };
-  const handleCheckout = createOrder;
+
+  const handlePaymentSuccess = async (response: any, sanityOrderId: string) => {
+    try {
+      const { verified } = await secureRequest("/api/razorpay/verify-payment", {
+        ...response,
+        sanityOrderId,
+      });
+
+      if (verified) {
+        clearCart();
+        navigate("/confirm", {
+          state: {
+            isPaymentSuccessful: true,
+            orderDetails: {
+              orderId: response.razorpay_payment_id,
+              customerName: name,
+            },
+          },
+          replace: true,
+        });
+      }
+    } catch (error) {
+      console.error("Verification failed:", error);
+    }
+  };
 
   if (orderSuccess && orderId) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-lg text-center">
           <div className="mb-6">
-            <h1 className="text-2xl font-medium text-gray-900 mb-2">Order Created Successfully!</h1>
+            <h1 className="text-2xl font-medium text-gray-900 mb-2">
+              Order Created Successfully!
+            </h1>
             <p className="text-gray-600">Order ID: {orderId}</p>
           </div>
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={() => (window.location.href = "/")}
             className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Continue Shopping
@@ -196,91 +199,105 @@ const Cart: React.FC = () => {
   }
 
   if (localCartItems.length === 0) {
-    return (
-     <EmptyCart/>
-    );
+    return <EmptyCart />;
   }
 
   return (
     <div>
       <div className="max-w-[98%] mx-auto px-4 py-8">
-     <div className="font-inter flex  flex-col md:flex-row  gap-4 justify-between ">
-      <div>
-      <h1 className="text-lg font-medium">
-        You're 🤏 this close to kickstarting those habits!
-      </h1>
-      <p className="text-sm text-gray-600  pb-4">
-        Add your details and proceed to payment
-      </p>
-      </div>
-      <div>
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Enter Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={`mt-1 block w-full p-2 border rounded-md ${
-              name && (isNameValid ? 'border-green-500' : 'border-red-500')
-            }`}
-            placeholder="Enter your name"
-            required
-          />
-          {name && !isNameValid && <p className="text-xs text-red-500 mt-1">Name is required</p>}
+        <div className="font-inter flex  flex-col md:flex-row  gap-4 justify-between ">
+          <div>
+            <h1 className="text-lg font-medium">
+              You're 🤏 this close to kickstarting those habits!
+            </h1>
+            <p className="text-sm text-gray-600  pb-4">
+              Add your details and proceed to payment
+            </p>
+          </div>
+          <div>
+            <div id="checkout-form" className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Enter Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className={`mt-1 block w-full p-2 border rounded-md ${
+                    name &&
+                    (isNameValid ? "border-green-500" : "border-red-500")
+                  }`}
+                  placeholder="Enter your name"
+                  required
+                />
+                {name && !isNameValid && (
+                  <p className="text-xs text-red-500 mt-1">Name is required</p>
+                )}
+              </div>
+              <div className="flex-1">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Enter Phone Number
+                </label>
+                <div className="flex items-center">
+                  <span className="px-2 py-2 bg-gray-100 text-gray-700 rounded-l-md border border-gray-300  mt-1">
+                    +91
+                  </span>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={phone}
+                    onChange={(e) => {
+                      const input = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+                      if (input.length <= 10) {
+                        setPhone(input); // Only update with max 10 digits
+                      }
+                    }}
+                    className={`block w-full p-2 border rounded-r-md mt-1 ${
+                      phone &&
+                      (isPhoneValid ? "border-green-500" : "border-red-500")
+                    }`}
+                    placeholder="Enter phone number"
+                    required
+                  />
+                </div>
+                {phone && !isPhoneValid && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Enter a valid 10-digit phone number
+                  </p>
+                )}
+              </div>
+              {/* Checkout Top */}
+              <div className="md:flex md:mt-0 md:justify-center flex-col">
+                <button
+                  className={`w-full md:w-auto px-4 py-2 mt-2 md:mt-5 rounded-lg text-white ${
+                    isFormValid
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "bg-gray-300 cursor-not-allowed"
+                  }`}
+                  onClick={handleCheckout}
+                  disabled={!isFormValid || isProcessing}
+                >
+                  {isProcessing ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="animate-spin" size={16} />
+                      Processing...
+                    </span>
+                  ) : (
+                    "Proceed to Payment"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex-1">
-  <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-    Enter Phone Number
-  </label>
-  <div className="flex items-center">
-    <span className="px-2 py-2 bg-gray-100 text-gray-700 rounded-l-md border border-gray-300  mt-1">
-      +91
-    </span>
-    <input
-      type="tel"
-      id="phone"
-      value={phone}
-      onChange={(e) => {
-        const input = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
-        if (input.length <= 10) {
-          setPhone(input); // Only update with max 10 digits
-        }
-      }}
-      className={`block w-full p-2 border rounded-r-md mt-1 ${
-        phone && (isPhoneValid ? 'border-green-500' : 'border-red-500')
-      }`}
-      placeholder="Enter phone number"
-      required
-    />
-  </div>
-  {phone && !isPhoneValid && (
-    <p className="text-xs text-red-500 mt-1">
-      Enter a valid 10-digit phone number
-    </p>
-  )}
-</div>
-{/* Checkout Top */}
-        <div className="md:flex md:mt-0 md:justify-center flex-col">
-          <button
-            className={`w-full md:w-auto px-4 py-2 mt-2 md:mt-5 rounded-lg text-white ${
-              isFormValid
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-gray-300 cursor-not-allowed'
-            }`}
-            onClick={handleCheckout}
-            disabled={!isFormValid || isProcessing}
-          >
-            {isProcessing ? 'Processing...' : 'Proceed to Payment'}
-          </button>
-        </div>
-      </div>
-      </div>
-    </div>
-
 
         {/* Freebie Button */}
         {!isFreeItemInCart && localCartItems.length > 0 && (
@@ -289,16 +306,18 @@ const Cart: React.FC = () => {
               onClick={handleAddFreebie}
               className="bg-buttonOrange text-white font-inter px-4 py-2 rounded-xl hover:text-black hover:border-buttonOrange hover:border hover:bg-white flex items-center gap-2 transition-all"
             >
-              <span><LockKeyhole /></span>
+              <span>
+                <LockKeyhole />
+              </span>
               UNLOCK FREE GIFT
             </button>
           </div>
         )}
 
         <div className="space-y-4 py-6">
-          {localCartItems.map((item) => (
+          {localCartItems.map((item, index) => (
             <div
-              key={item._id}
+              key={`${item._id}_${index}`}
               className="flex items-center gap-4 border border-gray-200 rounded-lg p-6"
             >
               {item.image && item.image.asset && (
@@ -310,12 +329,18 @@ const Cart: React.FC = () => {
               )}
               <div className="flex-1">
                 <h3 className="text-sm font-blueCashews">{item.title}</h3>
-                <div className="text-sm text-gray-500">
-                ₹{item.defaultPrice.current}
-                {item.defaultPrice.current === 0 &&  (
-                    <span className="ml-2 text-buttonOrange text-xs">
-                      Free gift! 
+                <div className="text-xs font-inter mt-1 text-gray-500">
+                  {item.defaultPrice.current === 0 ? (
+                    <span className="text-gray-500">
+                      from the team #GoodHabitClub
                     </span>
+                  ) : (
+                    <>
+                      <span className="line-through">
+                        ₹{item.defaultPrice.original}
+                      </span>{" "}
+                      ₹{item.defaultPrice.current}
+                    </>
                   )}
                 </div>
               </div>
@@ -338,7 +363,8 @@ const Cart: React.FC = () => {
                     handleQuantityChange(
                       item._id,
                       item.selectedVariant?.variantId,
-                      item.quantity + 1)
+                      item.quantity + 1
+                    )
                   }
                   className="px-3 py-1 text-gray-500 hover:bg-gray-50"
                 >
@@ -349,34 +375,42 @@ const Cart: React.FC = () => {
           ))}
         </div>
 
-
-
         {/* Forgot Something Section */}
         <div className="flex justify-between items-center p-6 border rounded-xl">
           <div>
             <h2 className=" text-sm  font-blueCashews">Forgot something?</h2>
-            <p className="text-xs text-gray-500 max-w-40 md:max-w-full">Keep shopping,
-              we've saved your cart for you.</p>
+            <p className="text-xs text-gray-500 max-w-40 md:max-w-full">
+              Keep shopping, we've saved your cart for you.
+            </p>
           </div>
-          <button 
+          <button
             className="px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 font-inter font-medium"
-            onClick={() => window.location.href = '/'}
+            onClick={() => (window.location.href = "/")}
           >
             SHOP
           </button>
         </div>
-      
+
         {/* Bill Details */}
         <div className="mt-6">
-          <h2 className="font-medium mb-1">Bill Details</h2>
-          <div className="space-y-6 text-sm font-inter border border-gray-200 rounded-lg p-4">
+          <div className="mb-5">
+            <h2 className="font-semibold font-inter text-base">Bill Details</h2>
+            <span className="font-inter text-xs text-gray-500">
+              We love you!
+            </span>
+          </div>
+          <div className="space-y-4 text-sm font-inter border border-gray-200 rounded-lg p-4">
             <div className="flex justify-between">
               <span>Item total</span>
               <span>₹{totalPrice.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-green-600 pt-3 border-t border-gray-200 font-medium">
-              <span>Savings</span>
+              <span>Discount</span>
               <span>₹{savings.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between pt-3 border-t border-gray-200 font-medium">
+              <span>Shipping</span>
+              <span className="font-semibold">FREE</span>
             </div>
             <div className="flex justify-between pt-3 border-t border-gray-200 font-medium">
               <span>To Pay</span>
@@ -385,8 +419,8 @@ const Cart: React.FC = () => {
           </div>
         </div>
 
-          {/* Checkout Button Bottom*/}
-          <div className="md:flex  md:mt-6 mt-4 md:justify-center flex-col">
+        {/* Checkout Button Bottom*/}
+        {/* <div className="md:flex  md:mt-6 mt-4 md:justify-center flex-col">
           <button
             className={`w-full md:w-auto px-4 py-2 rounded-lg text-white ${
               isFormValid
@@ -399,10 +433,27 @@ const Cart: React.FC = () => {
             {isProcessing ? 'Processing...' : 'Proceed to Payment'}
           </button>
           
-        </div>
+        </div> */}
       </div>
       <Footer />
       <Tnc />
+      {/* {showSuccessModal && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg max-w-md w-full m-4">
+      <div className="mb-4 text-center">
+        <h2 className="text-2xl font-semibold mb-2">Payment Successful! 🎉</h2>
+        <p className="text-gray-600">Your order has been placed successfully.</p>
+        <p className="text-sm text-gray-500 mt-2">Payment ID: {paymentId}</p>
+      </div>
+      <button
+        onClick={() => window.location.href = '/'}
+        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        Continue Shopping
+      </button>
+    </div>
+  </div>
+)} */}
     </div>
   );
 };

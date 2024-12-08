@@ -32,14 +32,14 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
     }
   };
 
-  const currentPrice = selectedVariant?.price?.current || product.defaultPrice.current;
-  const originalPrice = selectedVariant?.price?.original || product.defaultPrice.original;
+  // const currentPrice = selectedVariant?.price?.current || product.defaultPrice.current;
+  // const originalPrice = selectedVariant?.price?.original || product.defaultPrice.original;
 
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <span className="line-through text-gray-500">₹{originalPrice}</span>
-        <span className="font-semibold">₹{currentPrice}</span>
+        {/* <span className="line-through text-gray-500">₹{originalPrice}</span>
+        <span className="font-semibold">₹{currentPrice}</span> */}
       </div>
 
       {!cartItem ? (
