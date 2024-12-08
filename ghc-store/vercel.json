@@ -12,8 +12,8 @@
       "dest": "/api/$1"
     },
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "src": "/(.*)",
+      "dest": "/"
     }
   ]
- }
+}
