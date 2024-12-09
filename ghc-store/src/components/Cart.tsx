@@ -8,6 +8,7 @@ import { Loader2, LockKeyhole } from "lucide-react";
 import EmptyCart from "./EmptyCart";
 import { useNavigate } from "react-router-dom";
 import { secureRequest } from "../utils/auth";
+import FullscreenLoader from "./FullscreenLoader"; 
 
 declare global {
   interface Window {
@@ -22,6 +23,7 @@ const Cart: React.FC = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const navigate = useNavigate();
+  const [isVerifying, setIsVerifying] = useState(false); // Add state for verifying loader
   const [error, setError] = useState<string | null>(null);
 
   // Validation
@@ -150,6 +152,7 @@ const Cart: React.FC = () => {
 
   const handlePaymentSuccess = async (response: any, sanityOrderId: string) => {
     try {
+      setIsVerifying(true); // Show verifying loader
       const { verified } = await secureRequest("/api/razorpay/verify-payment", {
         ...response,
         sanityOrderId,
@@ -157,6 +160,8 @@ const Cart: React.FC = () => {
 
       if (verified) {
         clearCart();
+           // Add small delay for better UX
+      // await new Promise(resolve => setTimeout(resolve, 1000));
         navigate("/confirm", {
           state: {
             isPaymentSuccessful: true,
@@ -170,6 +175,8 @@ const Cart: React.FC = () => {
       }
     } catch (error) {
       console.error("Verification failed:", error);
+    } finally {
+      setIsVerifying(false); // Hide loader
     }
   };
 
@@ -403,6 +410,7 @@ const Cart: React.FC = () => {
     {error}
   </div>
 )}
+{isVerifying && <FullscreenLoader />}
     </div>
   );
 };
