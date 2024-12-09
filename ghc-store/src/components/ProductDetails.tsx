@@ -15,6 +15,15 @@ import {
 } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
 
+type CategoryReference = {
+  _ref: string;
+  title: string;
+}
+
+type SimilarProductsProps = {
+  currentProductId: string;
+  category: CategoryReference;
+}
 // ImageModal Component
 const ImageModal: React.FC<ImageModalProps> = ({
   isOpen,
@@ -97,6 +106,90 @@ const ImageModal: React.FC<ImageModalProps> = ({
   );
 };
 
+const SimilarProducts = ({ currentProductId, category }: SimilarProductsProps) => {
+  const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // console.log('Category:', category); // Debug log
+    
+    const fetchSimilarProducts = async () => {
+      setIsLoading(true);
+      try {
+        // console.log('Fetching similar products with:', { 
+        //   categoryId: category._ref, 
+        //   currentProductId 
+        // }); // Debug log
+        
+        const products = await client.fetch<Product[]>(
+          `*[_type == "product" && category._ref == $categoryId && _id != $currentProductId][0...4]{
+            _id,
+            title,
+            baseSlug,
+            image,
+            defaultPrice,
+            showAddToCart,
+            category->{
+              title,
+              _ref
+            }
+          }`,
+          { 
+            categoryId: category._ref,
+            currentProductId 
+          }
+        );
+        
+        // console.log('Fetched products:', products); // Debug log
+        setSimilarProducts(products);
+      } catch (error) {
+        console.error('Error fetching similar products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (category?._ref) {
+      fetchSimilarProducts();
+    }
+  }, [category, currentProductId]);
+
+  if (isLoading) return <div>Loading similar products...</div>;
+  if (!similarProducts.length) return null;
+
+
+  return (
+    <div className="mt-6 mb-6 md:mb-40">
+      <h2 className="text-xl font-medium mb-6 font-blueCashews">People often buy</h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {similarProducts.map((product) => (
+          <div key={product._id} className="space-y-2">
+            <a href={`/product/${product.baseSlug.current}`} className="block">
+              <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
+                <img 
+                  src={urlFor(product.image).url()} 
+                  alt={product.title}
+                  className="w-full h-full object-contain hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+              <h3 className="font-medium text-sm mt-2">{product.title}</h3>
+              <div className="flex items-center gap-2">
+                <span className="line-through text-gray-500">₹{product.defaultPrice.original}</span>
+                <span className="font-medium">₹{product.defaultPrice.current}</span>
+              </div>
+            </a>
+            {product.showAddToCart && (
+              <AddToCartButton
+                product={product}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // Main ProductDetails Component
 const ProductDetails: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -123,9 +216,11 @@ const ProductDetails: React.FC = () => {
             additionalImages,
             defaultPrice,
             showAddToCart,
-            category->{
-              title
-            },
+          "category": category->{
+          _id,
+          title,
+          "_ref": _id 
+        },
             variants[] {
               variantId,
               colorName,
@@ -362,7 +457,15 @@ const ProductDetails: React.FC = () => {
         onPrevious={handlePreviousImage}
         onNext={handleNextImage}
       />
-
+{/* Similar Products */}
+{product?.category && (
+  <div className="max-w-[98%] mx-auto px-4">
+    <SimilarProducts 
+      currentProductId={product._id} 
+      category={product.category} 
+    />
+  </div>
+)}
       <Footer />
       <Tnc />
     </div>
