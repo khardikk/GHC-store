@@ -29,7 +29,7 @@ const Footer: React.FC = () => {
 
         {/* Join Button */}
         {/* <p className="text-gray-600 mb-4">Good habits, bad*ss vibes.</p> */}
-       <a href="https://forms.gle/kpyULU7s5XnXrUkg6" target="_blank"> <button className="w-full bg-blue-600 text-white py-3 rounded-md mb-4 hover:bg-blue-700 transition-colors">
+       <a href="https://forms.gle/kpyULU7s5XnXrUkg6" target="_blank"> <button className="w-full bg-footerBtn text-white py-3 rounded-md mb-4 hover:bg-blue-700 transition-colors">
           Join the Club
         </button>
         </a>
@@ -95,12 +95,12 @@ const Footer: React.FC = () => {
          <div className="mb-4">
           <h3 className="font-medium mb-4">Got something to share?</h3>
           <div className='flex'>
-          <a href="https://wa.me/9019009852" target="_blank" className="w-4/5 bg-blue-600 text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors">
+          <a href="https://wa.me/9019009852" target="_blank" className="w-4/5 bg-footerBtn text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors">
           <button>
            Whatsapp Us
           </button>
           </a>
-          <a href="mailto:goodhabitsclub.org@gmail.com" target="_blank" className="w-4/5 bg-blue-600 text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors"> 
+          <a href="mailto:goodhabitsclub.org@gmail.com" target="_blank" className="w-4/5 bg-footerBtn text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors"> 
           <button >
          Drop a Mail
           </button>

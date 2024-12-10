@@ -10,7 +10,8 @@ export default {
       colors: {
         mainBg: "#DFF756",
         cartBtn:"#4339F2", 
-        buttonOrange:"#EF9400"
+        buttonOrange:"#EF9400",
+        footerBtn:"#2D4EE0"
       },
       fontFamily: {
         inter: ['Inter', ...defaultTheme.fontFamily.sans],
