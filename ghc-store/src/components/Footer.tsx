@@ -95,7 +95,7 @@ const Footer: React.FC = () => {
          <div className="mb-4">
           <h3 className="font-medium mb-4">Got something to share?</h3>
           <div className='flex'>
-          <a href="https://wa.me/901902009852" target="_blank" className="w-4/5 bg-blue-600 text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors">
+          <a href="https://wa.me/9019009852" target="_blank" className="w-4/5 bg-blue-600 text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors">
           <button>
            Whatsapp Us
           </button>
