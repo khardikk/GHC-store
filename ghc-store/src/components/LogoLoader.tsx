@@ -6,14 +6,14 @@ interface LogoLoaderProps {
   initialDuration?: number;
 }
 
-const LogoLoader: React.FC<LogoLoaderProps> = ({ children, initialDuration = 4000 }) => {
+const LogoLoader: React.FC<LogoLoaderProps> = ({ children, initialDuration = 4500 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
     setIsLoading(true);
     const isFirstVisit = !localStorage.getItem('hasVisited');
-    const loadingTime = isFirstVisit ? initialDuration : 2000;
+    const loadingTime = isFirstVisit ? initialDuration : 2500;
 
     const timer = setTimeout(() => {
       setIsLoading(false);

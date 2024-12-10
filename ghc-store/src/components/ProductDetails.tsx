@@ -6,7 +6,8 @@ import ContentLoader from "../components/ContentLoader";
 import Tnc from "./Tnc";
 import Footer from "./Footer";
 import AddToCartButton from "./AddToCartButton";
-import { PortableText } from '@portabletext/react';
+import { PortableText, PortableTextComponentProps } from "@portabletext/react";
+import type { PortableTextBlock} from "@portabletext/types";
 import {
   ChevronDown,
   ChevronUp,
@@ -16,15 +17,39 @@ import {
 } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
 
+type PortableTextProps = {
+  children?: React.ReactNode;
+};
+// Components object with proper typing
+const components = {
+  list: {
+    bullet: ({ children }: PortableTextComponentProps<PortableTextBlock>) => (
+      <ul className="list-disc pl-4 space-y-2">{children}</ul>
+    ),
+  },
+  marks: {
+    strong: ({ children }: PortableTextProps) => (
+      <strong className="font-semibold">{children}</strong>
+    ),
+    underline: ({ children }: PortableTextProps) => (
+      <span className="underline">{children}</span>
+    ),
+  },
+  block: {
+    normal: ({ children }: PortableTextProps) => (
+      <p className="mb-2">{children}</p>
+    ),
+  },
+};
 type CategoryReference = {
   _ref: string;
   title: string;
-}
+};
 
 type SimilarProductsProps = {
   currentProductId: string;
   category: CategoryReference;
-}
+};
 // ImageModal Component
 const ImageModal: React.FC<ImageModalProps> = ({
   isOpen,
@@ -107,26 +132,35 @@ const ImageModal: React.FC<ImageModalProps> = ({
   );
 };
 
-const SimilarProducts = ({ currentProductId, category }: SimilarProductsProps) => {
+const SimilarProducts = ({
+  currentProductId,
+  category,
+}: SimilarProductsProps) => {
   const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // console.log('Category:', category); // Debug log
-    
+
     const fetchSimilarProducts = async () => {
       setIsLoading(true);
       try {
-        // console.log('Fetching similar products with:', { 
-        //   categoryId: category._ref, 
-        //   currentProductId 
+        // console.log('Fetching similar products with:', {
+        //   categoryId: category._ref,
+        //   currentProductId
         // }); // Debug log
-        
+
         const products = await client.fetch<Product[]>(
           `*[_type == "product" && category._ref == $categoryId && _id != $currentProductId][0...4]{
             _id,
             title,
             baseSlug,
+             description[]{
+      ...,
+      _type,
+      marks,
+      children
+    }
             image,
             defaultPrice,
             showAddToCart,
@@ -135,16 +169,16 @@ const SimilarProducts = ({ currentProductId, category }: SimilarProductsProps) =
               _ref
             }
           }`,
-          { 
+          {
             categoryId: category._ref,
-            currentProductId 
+            currentProductId,
           }
         );
-        
+
         // console.log('Fetched products:', products); // Debug log
         setSimilarProducts(products);
       } catch (error) {
-        console.error('Error fetching similar products:', error);
+        console.error("Error fetching similar products:", error);
       } finally {
         setIsLoading(false);
       }
@@ -158,32 +192,33 @@ const SimilarProducts = ({ currentProductId, category }: SimilarProductsProps) =
   if (isLoading) return <div>Loading similar products...</div>;
   if (!similarProducts.length) return null;
 
-
   return (
     <div className="mt-12 mb-12 md:mb-40 md:mt-28">
-      <h2 className="text-xl font-medium mb-6 font-blueCashews">You may also like</h2>
+      <h2 className="text-xl font-medium mb-6 font-blueCashews">
+        You may also like
+      </h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {similarProducts.map((product) => (
           <div key={product._id} className="space-y-2">
             <a href={`/product/${product.baseSlug.current}`} className="block">
               <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
-                <img 
-                  src={urlFor(product.image).url()} 
+                <img
+                  src={urlFor(product.image).url()}
                   alt={product.title}
                   className="w-full h-full object-contain hover:scale-105 transition-transform duration-200"
                 />
               </div>
               <h3 className="font-medium text-sm mt-2">{product.title}</h3>
               <div className="flex items-center gap-2">
-                <span className="line-through text-gray-500">₹{product.defaultPrice.original}</span>
-                <span className="font-medium">₹{product.defaultPrice.current}</span>
+                <span className="line-through text-gray-500">
+                  ₹{product.defaultPrice.original}
+                </span>
+                <span className="font-medium">
+                  ₹{product.defaultPrice.current}
+                </span>
               </div>
             </a>
-            {product.showAddToCart && (
-              <AddToCartButton
-                product={product}
-              />
-            )}
+            {product.showAddToCart && <AddToCartButton product={product} />}
           </div>
         ))}
       </div>
@@ -252,12 +287,13 @@ const ProductDetails: React.FC = () => {
   if (isLoading) return <ContentLoader />;
   if (!product) return <p className="text-center mt-10">Product not found.</p>;
 
+ 
   const sections = [
     {
       title: "Product Details",
       content: (
         <div className="text-gray-500 text-sm font-normal">
-          <PortableText value={product.description} />
+          <PortableText value={product.description} components={components as any} />
         </div>
       ),
     },
@@ -265,21 +301,26 @@ const ProductDetails: React.FC = () => {
       title: "Shipping",
       content: (
         <ul className="list-disc pl-5 space-y-1 text-gray-500 text-sm font-normal">
-        <li>Orders are processed within 3-5 business days.</li>
-        <li>We offer free shipping across India.</li>
-        <br/>
-        <b>Shipping time : </b><li>Metro cities: 5-7 business days</li><li>Non-Metro cities: 7-10 business days</li>
-      </ul>
+          <li>Orders are processed within 3-5 business days.</li>
+          <li>We offer free shipping across India.</li>
+          <br />
+          <b>Shipping time : </b>
+          <li>Metro cities: 5-7 business days</li>
+          <li>Non-Metro cities: 7-10 business days</li>
+        </ul>
       ),
     },
     {
       title: "Return Policy",
       content: (
         <ul className="list-disc pl-5 space-y-1 text-gray-500 text-sm font-normal">
-        <li>We do not accept returns once the product has been delivered.</li>
-        <li>Refunds are only applicable if the product is found to be defective or damaged during transit.</li>
-        {/* <li>Check Return & Refund section for more details.</li> */}
-      </ul>
+          <li>We do not accept returns once the product has been delivered.</li>
+          <li>
+            Refunds are only applicable if the product is found to be defective
+            or damaged during transit.
+          </li>
+          {/* <li>Check Return & Refund section for more details.</li> */}
+        </ul>
       ),
     },
   ];
@@ -307,20 +348,20 @@ const ProductDetails: React.FC = () => {
     ? `${product?.title} - ${selectedVariant.colorName}`
     : product?.title;
 
-    const getDisplayImages = () => {
-      if (selectedVariant?.variantImages?.length) {
-        return selectedVariant.variantImages;
-      }
-      
-      const images: any[] = [];
-      if (product?.image) {
-        images.push(product.image);
-      }
-      if (product?.additionalImages?.length) {
-        images.push(...product.additionalImages);
-      }
-      return images;
-    };
+  const getDisplayImages = () => {
+    if (selectedVariant?.variantImages?.length) {
+      return selectedVariant.variantImages;
+    }
+
+    const images: any[] = [];
+    if (product?.image) {
+      images.push(product.image);
+    }
+    if (product?.additionalImages?.length) {
+      images.push(...product.additionalImages);
+    }
+    return images;
+  };
 
   const displayImages = getDisplayImages();
 
@@ -345,7 +386,7 @@ const ProductDetails: React.FC = () => {
                   onClick={() => handleImageClick(index)}
                 >
                   <img
-                    src={urlFor(img).quality(80).auto('format').url()}
+                    src={urlFor(img).quality(80).auto("format").url()}
                     alt={`Product Image ${index + 1}`}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
                   />
@@ -402,34 +443,34 @@ const ProductDetails: React.FC = () => {
                   </div>
                 </div>
               )}
-{/* Prdoduct sizes */}
-{product.sizes && product.sizes.length > 0 && (
-    <div className="flex flex-col gap-2">
-      <p className="font-medium">Select Size</p>
-      <div className="flex gap-2">
-        {product.sizes.map((size) => (
-          <button
-            key={size}
-            onClick={() => setSelectedSize(size)}
-            className={`px-3 py-1 border rounded-md ${
-              selectedSize === size
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 hover:border-blue-500'
-            }`}
-          >
-            {size}
-          </button>
-        ))}
-      </div>
-    </div>
-  )}
+              {/* Prdoduct sizes */}
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <p className="font-medium">Select Size</p>
+                  <div className="flex gap-2">
+                    {product.sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`px-3 py-1 border rounded-md ${
+                          selectedSize === size
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 hover:border-blue-500"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {/* Add to Cart */}
               {/* Add to Cart */}
               {product?.showAddToCart && (
                 <AddToCartButton
                   product={product}
                   selectedVariant={selectedVariant || undefined}
-                  selectedSize={selectedSize || undefined}  // Change this
+                  selectedSize={selectedSize || undefined} // Change this
                   disabled={product.sizes && !selectedSize}
                 />
               )}
@@ -484,15 +525,15 @@ const ProductDetails: React.FC = () => {
         onPrevious={handlePreviousImage}
         onNext={handleNextImage}
       />
-{/* Similar Products */}
-{product?.category && (
-  <div className="max-w-[98%] mx-auto px-4">
-    <SimilarProducts 
-      currentProductId={product._id} 
-      category={product.category} 
-    />
-  </div>
-)}
+      {/* Similar Products */}
+      {product?.category && (
+        <div className="max-w-[98%] mx-auto px-4">
+          <SimilarProducts
+            currentProductId={product._id}
+            category={product.category}
+          />
+        </div>
+      )}
       <Footer />
       <Tnc />
     </div>
