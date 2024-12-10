@@ -24,6 +24,12 @@ export default {
         type: 'string',
       },
       {
+        name: 'address',
+        title: 'Delivery Address',
+        type: 'text',
+        validation: Rule => Rule.required()
+      },
+      {
         name: 'items',
         title: 'Order Items',
         type: 'array',

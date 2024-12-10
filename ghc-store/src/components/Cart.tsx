@@ -8,7 +8,7 @@ import { Loader2, LockKeyhole } from "lucide-react";
 import EmptyCart from "./EmptyCart";
 import { useNavigate } from "react-router-dom";
 import { secureRequest } from "../utils/auth";
-import FullscreenLoader from "./FullscreenLoader"; 
+import FullscreenLoader from "./FullscreenLoader";
 
 declare global {
   interface Window {
@@ -17,7 +17,8 @@ declare global {
 }
 
 const Cart: React.FC = () => {
-  const { cartItems, updateQuantity, getTotalPrice, addToCart, clearCart } = useCart();
+  const { cartItems, updateQuantity, getTotalPrice, addToCart, clearCart } =
+    useCart();
   const [localCartItems, setLocalCartItems] = useState(cartItems);
   const [isProcessing, setIsProcessing] = useState(false);
   const [name, setName] = useState("");
@@ -25,6 +26,8 @@ const Cart: React.FC = () => {
   const navigate = useNavigate();
   const [isVerifying, setIsVerifying] = useState(false); // Add state for verifying loader
   const [error, setError] = useState<string | null>(null);
+  const [address, setAddress] = useState("");
+  const isAddressValid = address.trim().length >= 10; // Minimum length for valid address
 
   // Validation
   const isNameValid = /^[a-zA-Z\s'-]{2,50}$/.test(name.trim());
@@ -61,9 +64,17 @@ const Cart: React.FC = () => {
     variants: [],
   };
 
-  useEffect(() => {
-    setLocalCartItems(cartItems);
-  }, [cartItems]);
+  // Calculate non-free items
+  const nonFreeItems = cartItems.filter((item) => item._id !== freeProduct._id);
+
+ useEffect(() => {
+  setLocalCartItems(cartItems);
+
+  // Remove freebie if it's the only item
+  if (nonFreeItems.length === 0 && isFreeItemInCart) {
+    updateQuantity(freeProduct._id, undefined, 0);
+  }
+}, [cartItems]);
 
   const handleQuantityChange = (
     id: string,
@@ -72,7 +83,7 @@ const Cart: React.FC = () => {
     selectedSize?: string
   ) => {
     if (newQuantity > 0) {
-      updateQuantity(id, variantId, newQuantity,  selectedSize);
+      updateQuantity(id, variantId, newQuantity, selectedSize);
     } else {
       updateQuantity(id, variantId, 0, selectedSize);
     }
@@ -102,6 +113,7 @@ const Cart: React.FC = () => {
         amount: totalPrice - savings,
         customerName: name,
         customerPhone: phone,
+        address: address,
         items: cartItems.map((item) => ({
           productId: item._id,
           title: item.title,
@@ -161,8 +173,8 @@ const Cart: React.FC = () => {
 
       if (verified) {
         clearCart();
-           // Add small delay for better UX
-      // await new Promise(resolve => setTimeout(resolve, 1000));
+        // Add small delay for better UX
+        // await new Promise(resolve => setTimeout(resolve, 1000));
         navigate("/confirm", {
           state: {
             isPaymentSuccessful: true,
@@ -180,7 +192,6 @@ const Cart: React.FC = () => {
       setIsVerifying(false); // Hide loader
     }
   };
-
 
   if (localCartItems.length === 0) {
     return <EmptyCart />;
@@ -258,6 +269,31 @@ const Cart: React.FC = () => {
                   </p>
                 )}
               </div>
+              <div className="flex-1">
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Delivery Address
+                </label>
+                <textarea
+                  id="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className={`mt-1 block w-full p-2 border rounded-md ${
+                    address &&
+                    (isAddressValid ? "border-green-500" : "border-red-500")
+                  }`}
+                  placeholder="Enter complete address with pincode"
+                  rows={3}
+                  required
+                />
+                {address && !isAddressValid && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Please enter complete address with pincode
+                  </p>
+                )}
+              </div>
               {/* Checkout Top */}
               <div className="md:flex md:mt-0 md:justify-center flex-col">
                 <button
@@ -284,7 +320,7 @@ const Cart: React.FC = () => {
         </div>
 
         {/* Freebie Button */}
-        {!isFreeItemInCart && localCartItems.length > 0 && (
+       {nonFreeItems.length > 0 && !isFreeItemInCart && (
           <div className="mt-4 mb-4">
             <button
               onClick={handleAddFreebie}
@@ -312,7 +348,10 @@ const Cart: React.FC = () => {
                 />
               )}
               <div className="flex-1">
-                <h3 className="text-sm font-blueCashews">{item.title} {item.selectedSize ? `- ${item.selectedSize}` : ''}</h3>
+                <h3 className="text-sm font-blueCashews">
+                  {item.title}{" "}
+                  {item.selectedSize ? `- ${item.selectedSize}` : ""}
+                </h3>
                 <div className="text-xs font-inter mt-1 text-gray-500">
                   {item.defaultPrice.current === 0 ? (
                     <span className="text-gray-500">
@@ -335,7 +374,7 @@ const Cart: React.FC = () => {
                       item._id,
                       item.selectedVariant?.variantId,
                       item.quantity - 1,
-                      item.selectedSize 
+                      item.selectedSize
                     )
                   }
                   className="px-3 py-1 text-gray-500 hover:bg-gray-50"
@@ -382,7 +421,7 @@ const Cart: React.FC = () => {
           <div className="mb-5">
             <h2 className="font-semibold font-inter text-base">Bill Details</h2>
             <span className="font-inter text-xs text-gray-500">
-            We promise its gonna be worth every penny!
+              We promise its gonna be worth every penny!
             </span>
           </div>
           <div className="space-y-4 text-sm font-inter border border-gray-200 rounded-lg p-4">
@@ -404,16 +443,11 @@ const Cart: React.FC = () => {
             </div>
           </div>
         </div>
-
       </div>
       <Footer />
       <Tnc />
-      {error && (
-  <div className="text-red-500 text-sm mb-4">
-    {error}
-  </div>
-)}
-{isVerifying && <FullscreenLoader />}
+      {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+      {isVerifying && <FullscreenLoader />}
     </div>
   );
 };
