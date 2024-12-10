@@ -379,7 +379,7 @@ const Cart: React.FC = () => {
           <div className="mb-5">
             <h2 className="font-semibold font-inter text-base">Bill Details</h2>
             <span className="font-inter text-xs text-gray-500">
-              We love you!
+            We promise its gonna be worth every penny!
             </span>
           </div>
           <div className="space-y-4 text-sm font-inter border border-gray-200 rounded-lg p-4">
