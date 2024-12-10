@@ -29,7 +29,7 @@ const Contact: React.FC = () => {
               </li>
             </ul>
             <p className="text-sm mt-6">
-              We’ll get back to you as soon as possible. Thank you for being a part of the Good Habits Club! 😊
+              We’ll get back to you as soon as possible. Thank you for being a part of the Good Habits Club!
             </p>
           </div>
         </div>

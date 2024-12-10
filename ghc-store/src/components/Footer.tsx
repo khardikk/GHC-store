@@ -12,26 +12,27 @@ const Footer: React.FC = () => {
       <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-6 w-full">
         {/* Header Section */}
         <div className="flex justify-between items-center lg:items-start">
-  {/* Text Section */}
-  <div className="lg:w-3/4 lg:h-[15rem] h-full">
-    <h1 className="text-xl lg:text-4xl font-inter font-semibold mb-4 leading-tight">
-      Let's get this <br />
-      Habit Party started!
-    </h1>
+          {/* Text Section */}
+          <div className="lg:w-3/4 lg:h-[15rem] h-full">
+            <h1 className="text-xl lg:text-4xl font-inter font-semibold mb-4 leading-tight">
+              Let's get this <br />
+              Habit Party started!
+            </h1>
+          </div>
 
-  </div>
-
-  {/* Image Section */}
-  <div className="w-24 h-24 lg:w-[209px] lg:h-[208px] flex-shrink-0">
-    <img src={footerImg} alt="Footer Icon" className="w-full h-full" />
-  </div>
-</div>
+          {/* Image Section */}
+          <div className="w-24 h-24 lg:w-[209px] lg:h-[208px] flex-shrink-0">
+            <img src={footerImg} alt="Footer Icon" className="w-full h-full" />
+          </div>
+        </div>
 
         {/* Join Button */}
         {/* <p className="text-gray-600 mb-4">Good habits, bad*ss vibes.</p> */}
-       <a href="https://forms.gle/kpyULU7s5XnXrUkg6" target="_blank"> <button className="w-full bg-footerBtn text-white py-3 rounded-md mb-4 hover:bg-blue-700 transition-colors">
-          Join the Club
-        </button>
+        <a href="https://forms.gle/kpyULU7s5XnXrUkg6" target="_blank">
+          {" "}
+          <button className="w-full bg-footerBtn text-white py-3 rounded-md mb-4 hover:bg-blue-700 transition-colors">
+            Join the Club
+          </button>
         </a>
 
         {/* About Section */}
@@ -47,6 +48,7 @@ const Footer: React.FC = () => {
             <div className="mt-2 text-sm">
               <ul className="list-disc pl-5 space-y-2 p-2 font-inter text-gray-600 mb-4">
                 <li>
+                  Is there anything cooler than working on building good habits?
                   We're a solid community of people with strong intent, started
                   to bring together those of us building good habits and wanting
                   to stick to them—whether in fitness, healthy eating,
@@ -54,12 +56,12 @@ const Footer: React.FC = () => {
                 </li>
                 <li>
                   What sets us apart is the personal touch. We're always up for
-                  a conversation if you want to know more!
+                  a conversation if you want to know more.
                 </li>
                 <li>
                   From tools to track your progress to a squad that cheers you
                   on, we're here to help you crush your goals, one good habit at
-                  a time!
+                  a time.
                 </li>
               </ul>
             </div>
@@ -92,37 +94,57 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Share Section */}
-         <div className="mb-4">
+        <div className="mb-4">
           <h3 className="font-medium mb-4">Got something to share?</h3>
-          <div className='flex'>
-          <a href="https://wa.me/9019009852" target="_blank" className="w-4/5 bg-footerBtn text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors">
-          <button>
-           Whatsapp Us
-          </button>
-          </a>
-          <a href="mailto:goodhabitsclub.org@gmail.com" target="_blank" className="w-4/5 bg-footerBtn text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors"> 
-          <button >
-         Drop a Mail
-          </button>
-          </a>
+          <div className="flex">
+            <a
+              href="https://wa.me/9019009852"
+              target="_blank"
+              className="w-4/5 bg-footerBtn text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors"
+            >
+              <button>Whatsapp Us</button>
+            </a>
+            <a
+              href="mailto:goodhabitsclub.org@gmail.com"
+              target="_blank"
+              className="w-4/5 bg-footerBtn text-white py-3 mr-2 rounded-md text-center hover:bg-blue-700 transition-colors"
+            >
+              <button>Drop a Mail</button>
+            </a>
           </div>
         </div>
 
         {/* Social Links */}
         <div className="text-center text-sm text-gray-600">
-          <a href="https://twitter.com/goodhabitsclub" target="_blank" className="hover:underline">
+          <a
+            href="https://twitter.com/goodhabitsclub"
+            target="_blank"
+            className="hover:underline"
+          >
             Twitter
           </a>{" "}
           |{" "}
-          <a href="https://instagram.com/club.goodhabits/" target="_blank" className="hover:underline">
+          <a
+            href="https://instagram.com/club.goodhabits/"
+            target="_blank"
+            className="hover:underline"
+          >
             Instagram
           </a>{" "}
           |{" "}
-          <a href="https://www.strava.com/clubs/goodhabitsclub" target="_blank" className="hover:underline">
+          <a
+            href="https://www.strava.com/clubs/goodhabitsclub"
+            target="_blank"
+            className="hover:underline"
+          >
             Strava
           </a>{" "}
           |{" "}
-          <a href="https://varunperu.notion.site/1460f654848e80528a54d8a23fc71636?pvs=105" target="_blank" className="hover:underline">
+          <a
+            href="https://varunperu.notion.site/1460f654848e80528a54d8a23fc71636?pvs=105"
+            target="_blank"
+            className="hover:underline"
+          >
             Volunteer
           </a>
         </div>

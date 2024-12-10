@@ -68,12 +68,13 @@ const Cart: React.FC = () => {
   const handleQuantityChange = (
     id: string,
     variantId: string | undefined,
-    newQuantity: number
+    newQuantity: number,
+    selectedSize?: string
   ) => {
     if (newQuantity > 0) {
-      updateQuantity(id, variantId, newQuantity);
+      updateQuantity(id, variantId, newQuantity,  selectedSize);
     } else {
-      updateQuantity(id, variantId, 0);
+      updateQuantity(id, variantId, 0, selectedSize);
     }
   };
   const handleAddFreebie = () => {
@@ -311,7 +312,7 @@ const Cart: React.FC = () => {
                 />
               )}
               <div className="flex-1">
-                <h3 className="text-sm font-blueCashews">{item.title}</h3>
+                <h3 className="text-sm font-blueCashews">{item.title} {item.selectedSize ? `- ${item.selectedSize}` : ''}</h3>
                 <div className="text-xs font-inter mt-1 text-gray-500">
                   {item.defaultPrice.current === 0 ? (
                     <span className="text-gray-500">
@@ -333,7 +334,8 @@ const Cart: React.FC = () => {
                     handleQuantityChange(
                       item._id,
                       item.selectedVariant?.variantId,
-                      item.quantity - 1
+                      item.quantity - 1,
+                      item.selectedSize 
                     )
                   }
                   className="px-3 py-1 text-gray-500 hover:bg-gray-50"
@@ -346,7 +348,8 @@ const Cart: React.FC = () => {
                     handleQuantityChange(
                       item._id,
                       item.selectedVariant?.variantId,
-                      item.quantity + 1
+                      item.quantity + 1,
+                      item.selectedSize
                     )
                   }
                   className="px-3 py-1 text-gray-500 hover:bg-gray-50"

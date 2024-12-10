@@ -56,7 +56,7 @@ const Return: React.FC = () => {
               </section>
 
               <p className="mt-6">
-                We appreciate your understanding and support of this policy. 😊
+                We appreciate your understanding and support of this policy.
               </p>
             </div>
           </div>

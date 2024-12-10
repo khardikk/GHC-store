@@ -25,7 +25,10 @@ export interface ProductVariant {
 export interface Product {
   _id: string;
   title: string;
-  quantity?: number; 
+  quantity?: number;
+  description?: any[];
+  sizes?: string[];
+  selectedSize?: string;
   baseSlug: {
     current: string;
     _type?: string; // Optional if _type is not always needed

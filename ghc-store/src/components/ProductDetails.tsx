@@ -6,6 +6,7 @@ import ContentLoader from "../components/ContentLoader";
 import Tnc from "./Tnc";
 import Footer from "./Footer";
 import AddToCartButton from "./AddToCartButton";
+import { PortableText } from '@portabletext/react';
 import {
   ChevronDown,
   ChevronUp,
@@ -198,6 +199,7 @@ const ProductDetails: React.FC = () => {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null
   );
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -216,6 +218,8 @@ const ProductDetails: React.FC = () => {
             additionalImages,
             defaultPrice,
             showAddToCart,
+              description,
+        sizes,
           "category": category->{
           _id,
           title,
@@ -234,6 +238,7 @@ const ProductDetails: React.FC = () => {
         );
         setProduct(productData);
         setSelectedVariant(null);
+        setSelectedSize(null);
       } catch (error) {
         console.error("Error fetching product:", error);
       } finally {
@@ -251,30 +256,30 @@ const ProductDetails: React.FC = () => {
     {
       title: "Product Details",
       content: (
-        <ul className="list-disc pl-5 space-y-1 text-gray-500 text-sm font-normal">
-          <li>I'm a software engineer by profession, having worked at...</li>
-          <li>
-            A couple of startups, anything code-related is something that I can
-            pick up.
-          </li>
-          <li>I'm super into planning for events and organizing them.</li>
-        </ul>
+        <div className="text-gray-500 text-sm font-normal">
+          <PortableText value={product.description} />
+        </div>
       ),
     },
     {
       title: "Shipping",
       content: (
-        <p className="text-gray-500 text-sm font-normal">
-          Free shipping for orders over ₹500.
-        </p>
+        <ul className="list-disc pl-5 space-y-1 text-gray-500 text-sm font-normal">
+        <li>Orders are processed within 3-5 business days.</li>
+        <li>We offer free shipping across India.</li>
+        <br/>
+        <b>Shipping time : </b><li>Metro cities: 5-7 business days</li><li>Non-Metro cities: 7-10 business days</li>
+      </ul>
       ),
     },
     {
       title: "Return Policy",
       content: (
-        <p className="text-gray-500 text-sm font-normal">
-          7-day return policy on unused items.
-        </p>
+        <ul className="list-disc pl-5 space-y-1 text-gray-500 text-sm font-normal">
+        <li>We do not accept returns once the product has been delivered.</li>
+        <li>Refunds are only applicable if the product is found to be defective or damaged during transit.</li>
+        {/* <li>Check Return & Refund section for more details.</li> */}
+      </ul>
       ),
     },
   ];
@@ -397,13 +402,35 @@ const ProductDetails: React.FC = () => {
                   </div>
                 </div>
               )}
-
+{/* Prdoduct sizes */}
+{product.sizes && product.sizes.length > 0 && (
+    <div className="flex flex-col gap-2">
+      <p className="font-medium">Select Size</p>
+      <div className="flex gap-2">
+        {product.sizes.map((size) => (
+          <button
+            key={size}
+            onClick={() => setSelectedSize(size)}
+            className={`px-3 py-1 border rounded-md ${
+              selectedSize === size
+                ? 'border-blue-500 bg-blue-50'
+                : 'border-gray-200 hover:border-blue-500'
+            }`}
+          >
+            {size}
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
               {/* Add to Cart */}
               {/* Add to Cart */}
               {product?.showAddToCart && (
                 <AddToCartButton
                   product={product}
                   selectedVariant={selectedVariant || undefined}
+                  selectedSize={selectedSize || undefined}  // Change this
+                  disabled={product.sizes && !selectedSize}
                 />
               )}
 

@@ -11,6 +11,7 @@ type CartItem = {
     _type?: string;
   };
   selectedVariant?: ProductVariant;
+  selectedSize?: string; 
   defaultPrice: {
     original: number;
     current: number;
@@ -19,8 +20,8 @@ type CartItem = {
 
 type CartContextType = {
   cartItems: CartItem[];
-  addToCart: (product: Product, variant?: ProductVariant) => void;
-  updateQuantity: (id: string, variantId: string | undefined, quantity: number) => void;
+  addToCart: (product: Product, variant?: ProductVariant, size?: string) => void;
+  updateQuantity: (id: string, variantId: string | undefined, quantity: number, size?: string) => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
   clearCart: () => void; // to clear cart
@@ -43,68 +44,86 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [cartItems]);
 
-  const addToCart = (product: Product, variant?: ProductVariant) => {
+  const addToCart = (product: Product, variant?: ProductVariant, size?: string) => {
     setCartItems(prevItems => {
-      // const cartItemId = variant ? `${product._id}-${variant.variantId}` : product._id;
       const existingItem = prevItems.find(i => 
         variant 
-          ? i._id === product._id && i.selectedVariant?.variantId === variant.variantId
-          : i._id === product._id && !i.selectedVariant
+          ? i._id === product._id && 
+            i.selectedVariant?.variantId === variant.variantId && 
+            i.selectedSize === size
+          : i._id === product._id && 
+            !i.selectedVariant && 
+            i.selectedSize === size
       );
-
+  
       const price = variant ? variant.price : product.defaultPrice;
       const isFreeProduct = price.current === 0;
-
+  
       if (existingItem) {
         if (isFreeProduct && existingItem.quantity >= 1) {
           return prevItems;
         }
-
+  
         return prevItems.map(i =>
           (variant 
-            ? i._id === product._id && i.selectedVariant?.variantId === variant.variantId
-            : i._id === product._id && !i.selectedVariant)
+            ? i._id === product._id && 
+              i.selectedVariant?.variantId === variant.variantId && 
+              i.selectedSize === size
+            : i._id === product._id && 
+              !i.selectedVariant && 
+              i.selectedSize === size)
             ? { ...i, quantity: Math.min(10, i.quantity + 1) }
             : i
         );
       }
-
+  
       const newItem: CartItem = {
         _id: product._id,
-        title: product.title + (variant ? ` - ${variant.colorName}` : ''),
+        title: product.title + 
+          (variant ? ` - ${variant.colorName}` : '') + 
+          (size ? ` - Size ${size}` : ''),
         quantity: 1,
         image: variant?.variantImages?.[0] || product.image,
         baseSlug: product.baseSlug,
         selectedVariant: variant,
+        selectedSize: size,
         defaultPrice: price
       };
-
+  
       return [...prevItems, newItem];
     });
   };
 
-  const updateQuantity = (id: string, variantId: string | undefined, quantity: number) => {
+  const updateQuantity = (id: string, variantId: string | undefined, quantity: number, size?: string) => {
     setCartItems(prevItems => {
       const item = prevItems.find(i => 
         variantId 
-          ? i._id === id && i.selectedVariant?.variantId === variantId
-          : i._id === id && !i.selectedVariant
+          ? i._id === id && 
+            i.selectedVariant?.variantId === variantId && 
+            i.selectedSize === size
+          : i._id === id && 
+            !i.selectedVariant && 
+            i.selectedSize === size
       );
-
+  
       if (item && item.defaultPrice.current === 0) {
         quantity = Math.min(1, quantity);
       }
-
+  
       const newItems = prevItems
         .map(item => (
           (variantId 
-            ? item._id === id && item.selectedVariant?.variantId === variantId
-            : item._id === id && !item.selectedVariant)
+            ? item._id === id && 
+              item.selectedVariant?.variantId === variantId && 
+              item.selectedSize === size
+            : item._id === id && 
+              !item.selectedVariant && 
+              item.selectedSize === size)
             ? { ...item, quantity }
             : item
         ))
         .filter(item => item.quantity > 0);
-
+  
       localStorage.setItem('cart', JSON.stringify(newItems));
       return newItems;
     });

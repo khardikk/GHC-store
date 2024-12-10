@@ -51,6 +51,11 @@ export default {
                 title: 'Variant ID',
                 type: 'string'
               },
+              {
+                name: 'selectedSize',
+                title: 'Selected Size',
+                type: 'string'
+              }
             ]
           }
         ]

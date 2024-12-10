@@ -86,16 +86,15 @@ const Privacy: React.FC = () => {
               <section>
                 <h2 className="font-bold mb-2">10. Contact Us</h2>
                 <p>
-                  If you have questions or concerns about our Privacy Policy, please contact us at:
+                If you have any questions or concerns, please reach out to us at
                 </p>
                 <ul className="list-disc pl-5">
                   <li><strong>Email</strong>: <a href="mailto:goodhabitsclub.org@gmail.com" className="text-blue-600 hover:underline">goodhabitsclub.org@gmail.com</a></li>
-                  <li><strong>Phone</strong>: +91 9019009852</li>
                 </ul>
               </section>
 
               <p className="mt-6">
-                Thank you for trusting the Good Habits Club Store. Your privacy and security are our priorities! 😊
+                Thank you for trusting the Good Habits Club Store. Your privacy and security are our priorities!
               </p>
             </div>
           </div>

@@ -6,29 +6,45 @@ interface AddToCartButtonProps {
   product: Product;
   selectedVariant?: ProductVariant;
   maxQuantity?: number;
+  selectedSize?: string | undefined;  
+  disabled?: boolean;
 }
 
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({ 
   product, 
-  selectedVariant, 
-  maxQuantity = 10 
+  selectedVariant,
+  selectedSize,
+  maxQuantity = 10,
+  disabled
 }) => {
   const { addToCart, cartItems, updateQuantity } = useCart();
 
   const cartItem = cartItems.find(
-    (item) => item._id === product._id && 
-    (!selectedVariant ? !item.selectedVariant : item.selectedVariant?.variantId === selectedVariant.variantId)
+    (item) => 
+      item._id === product._id && 
+      (!selectedVariant ? !item.selectedVariant : item.selectedVariant?.variantId === selectedVariant.variantId) &&
+      item.selectedSize === selectedSize
   );
 
   const handleAddToCart = () => {
-    addToCart(product, selectedVariant);
+    // Check if size is required but not selected
+    if (product.sizes && !selectedSize) {
+      alert('Please select a size');
+      return;
+    }
+    addToCart(product, selectedVariant, selectedSize || undefined);
   };
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity <= 0) {
-      updateQuantity(product._id, selectedVariant?.variantId, 0);
+      updateQuantity(product._id, selectedVariant?.variantId, 0, selectedSize || undefined);
     } else {
-      updateQuantity(product._id, selectedVariant?.variantId, Math.min(maxQuantity, newQuantity));
+      updateQuantity(
+        product._id, 
+        selectedVariant?.variantId, 
+        Math.min(maxQuantity, newQuantity),
+        selectedSize || undefined
+      );
     }
   };
 
@@ -46,8 +62,8 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
         <button
           className="w-full bg-[#4339F2] text-white py-2 px-4 rounded-lg font-medium text-sm hover:bg-[#3329E2] transition h-[50px]"
           onClick={handleAddToCart}
-          aria-label={`Add ${product.title}${selectedVariant ? ` - ${selectedVariant.colorName}` : ''} to cart`}
-        >
+          disabled={disabled}
+          aria-label={`Add ${product.title}${selectedVariant ? ` - ${selectedVariant.colorName}` : ''}${selectedSize ? ` - Size ${selectedSize}` : ''} to cart`}        >
           ADD TO CART
         </button>
       ) : (

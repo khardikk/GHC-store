@@ -20,6 +20,21 @@ export default {
       validation: Rule => Rule.required()
     },
     {
+      name: 'description',
+      title: 'Product Description',
+      type: 'array',
+      of: [{ type: 'block' }] // Rich text content
+    },
+    {
+      name: 'sizes',
+      title: 'Available Sizes',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        list: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+      }
+    },
+    {
       name: 'baseColor',
       title: 'Base Color',
       type: 'object',
