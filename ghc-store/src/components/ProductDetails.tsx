@@ -160,7 +160,7 @@ const SimilarProducts = ({ currentProductId, category }: SimilarProductsProps) =
 
   return (
     <div className="mt-6 mb-6 md:mb-40">
-      <h2 className="text-xl font-medium mb-6 font-blueCashews">People often buy</h2>
+      <h2 className="text-xl font-medium mb-6 font-blueCashews">You may also like</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {similarProducts.map((product) => (
           <div key={product._id} className="space-y-2">
