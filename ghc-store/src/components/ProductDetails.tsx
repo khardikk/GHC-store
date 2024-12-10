@@ -446,16 +446,16 @@ const ProductDetails: React.FC = () => {
               {/* Prdoduct sizes */}
               {product.sizes && product.sizes.length > 0 && (
                 <div className="flex flex-col gap-2">
-                  <p className="font-medium">Select Size</p>
+                  <p className="font-medium font-inter text-base">Select Size</p>
                   <div className="flex gap-2">
                     {product.sizes.map((size) => (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`px-3 py-1 border rounded-md ${
+                        className={`px-3 py-1 border-2 rounded-md font-inter text-base" ${
                           selectedSize === size
-                            ? "border-blue-500 bg-blue-50"
-                            : "border-gray-200 hover:border-blue-500"
+                            ? "border-gray-800 bg-blue-300"
+                            : "border-gray-200 hover:border-gray-800"
                         }`}
                       >
                         {size}

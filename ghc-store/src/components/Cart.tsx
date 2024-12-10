@@ -350,7 +350,7 @@ const Cart: React.FC = () => {
               <div className="flex-1">
                 <h3 className="text-sm font-blueCashews">
                   {item.title}{" "}
-                  {item.selectedSize ? `- ${item.selectedSize}` : ""}
+                  {item.selectedSize ? `` : ""}
                 </h3>
                 <div className="text-xs font-inter mt-1 text-gray-500">
                   {item.defaultPrice.current === 0 ? (
