@@ -32,7 +32,7 @@ const Cart: React.FC = () => {
   // Validation
   const isNameValid = /^[a-zA-Z\s'-]{2,50}$/.test(name.trim());
   const isPhoneValid = /^[6-9]\d{9}$/.test(phone);
-  const isFormValid = isNameValid && isPhoneValid;
+  const isFormValid = isNameValid && isPhoneValid && isAddressValid;
 
   // Freebie product definition
   const freeProduct: Product = {
