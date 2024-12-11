@@ -155,23 +155,17 @@ const SimilarProducts = ({
             _id,
             title,
             baseSlug,
-             description[]{
-      ...,
-      _type,
-      marks,
-      children
-    }
             image,
             defaultPrice,
             showAddToCart,
             category->{
               title,
-              _ref
+             _ref
             }
           }`,
-          {
-            categoryId: category._ref,
-            currentProductId,
+          { 
+            categoryId: category._ref, 
+            currentProductId 
           }
         );
 
@@ -256,7 +250,6 @@ const ProductDetails: React.FC = () => {
               description,
         sizes,
           "category": category->{
-          _id,
           title,
           "_ref": _id 
         },
@@ -271,6 +264,7 @@ const ProductDetails: React.FC = () => {
           }`,
           { slug }
         );
+        // console.log('Product with category:', productData); // Add this log
         setProduct(productData);
         setSelectedVariant(null);
         setSelectedSize(null);
