@@ -67,14 +67,14 @@ const Cart: React.FC = () => {
   // Calculate non-free items
   const nonFreeItems = cartItems.filter((item) => item._id !== freeProduct._id);
 
-  useEffect(() => {
-    setLocalCartItems(cartItems);
+ useEffect(() => {
+  setLocalCartItems(cartItems);
 
-    // Remove freebie if it's the only item
-    if (nonFreeItems.length === 0 && isFreeItemInCart) {
-      updateQuantity(freeProduct._id, undefined, 0);
-    }
-  }, [cartItems]);
+  // Remove freebie if it's the only item
+  if (nonFreeItems.length === 0 && isFreeItemInCart) {
+    updateQuantity(freeProduct._id, undefined, 0);
+  }
+}, [cartItems]);
 
   const handleQuantityChange = (
     id: string,
@@ -106,8 +106,9 @@ const Cart: React.FC = () => {
 
   const handleCheckout = async () => {
     setError(null);
-    // setIsProcessing(true);
+    setIsProcessing(true);
     try {
+
       const orderData = {
         amount: totalPrice - savings,
         customerName: name,
@@ -141,8 +142,6 @@ const Cart: React.FC = () => {
           razorpay_order_id: string;
           razorpay_signature: string;
         }) => {
-            // Only set processing state when payment is actually being processed
-          setIsProcessing(true);
           await handlePaymentSuccess(response, sanityOrderId);
         },
         prefill: {
@@ -153,16 +152,13 @@ const Cart: React.FC = () => {
 
       const rzp = new window.Razorpay(options);
 
-      rzp.on("payment.failed", function (response: any) {
+      rzp.on('payment.failed', function (response: any) {
         setIsProcessing(false);
-        setError(
-          "Payment failed: " +
-            (response.error?.description || "Please try again.")
-        );
+        setError("Payment failed: " + (response.error?.description || "Please try again."));
       });
 
       rzp.open();
-    } catch (error) {
+   } catch (error) {
       console.error("Checkout failed:", error);
       setIsProcessing(false);
       setError(
@@ -172,6 +168,7 @@ const Cart: React.FC = () => {
       );
     }
   };
+
 
   const handlePaymentSuccess = async (response: any, sanityOrderId: string) => {
     try {
@@ -198,7 +195,7 @@ const Cart: React.FC = () => {
       } else {
         setError("Payment verification failed. Please contact support.");
       }
-    } catch (error) {
+    }catch (error) {
       console.error("Verification failed:", error);
       setError("Payment verification failed. Please contact support.");
     } finally {
@@ -334,7 +331,7 @@ const Cart: React.FC = () => {
         </div>
 
         {/* Freebie Button */}
-        {nonFreeItems.length > 0 && !isFreeItemInCart && (
+       {nonFreeItems.length > 0 && !isFreeItemInCart && (
           <div className="mt-4 mb-4">
             <button
               onClick={handleAddFreebie}
@@ -363,7 +360,8 @@ const Cart: React.FC = () => {
               )}
               <div className="flex-1">
                 <h3 className="text-sm font-blueCashews">
-                  {item.title} {item.selectedSize ? `` : ""}
+                  {item.title}{" "}
+                  {item.selectedSize ? `` : ""}
                 </h3>
                 <div className="text-xs font-inter mt-1 text-gray-500">
                   {item.defaultPrice.current === 0 ? (
