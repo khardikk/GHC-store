@@ -16,6 +16,33 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
   const { addToCart, cartItems, updateQuantity } = useCart();
   const cartItem = cartItems.find(item => item._id === _id);
 
+
+   // Calculate optimal image dimensions based on container
+   const imageWidth = 500; // Max width of card
+    // Maintain 4:3 aspect ratio
+ 
+   // Optimized image URL generation
+   const optimizedImageUrl = urlFor(image)
+     .width(imageWidth)
+     .quality(100) // Reduced quality for list view
+     .format('webp') // Modern format with good compression
+     .fit('clip')
+     .url();
+ 
+   // Preload image on hover
+   const handleMouseEnter = () => {
+     const fullImage = urlFor(image)
+       .quality(100)
+       .format('webp')
+       .url();
+     const preloadLink = document.createElement('link');
+     preloadLink.rel = 'preload';
+     preloadLink.as = 'image';
+     preloadLink.href = fullImage;
+     document.head.appendChild(preloadLink);
+   };
+ 
+
   const handleAddToCart = () => {
     addToCart({
       _id,
@@ -38,13 +65,18 @@ const ProductCard: React.FC<ProductCardProps & { _id: string }> = ({
 
   return (
     <div className="flex flex-col w-full max-w-[280px]">
-     <Link to={`/product/${baseSlug?.current || ''}`}>
+      <Link 
+        to={`/product/${baseSlug?.current || ''}`}
+        onMouseEnter={handleMouseEnter}
+      >
         <div className="bg-white rounded-2xl mb-4">
           <img
-            src={urlFor(image).quality(60).url()}
+            src={optimizedImageUrl}
             alt={title}
             className="w-full h-auto object-cover rounded-lg"
             loading="lazy"
+            width={imageWidth}
+            
           />
         </div>
       </Link>

@@ -197,7 +197,7 @@ const SimilarProducts = ({
             <a href={`/product/${product.baseSlug.current}`} className="block">
               <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
                 <img
-                  src={urlFor(product.image).url()}
+                  src={urlFor(product.image).quality(60).auto("format").url()}
                   alt={product.title}
                   className="w-full h-full object-contain hover:scale-105 transition-transform duration-200"
                 />
@@ -380,7 +380,7 @@ const ProductDetails: React.FC = () => {
                   onClick={() => handleImageClick(index)}
                 >
                   <img
-                    src={urlFor(img).quality(80).auto("format").url()}
+                    src={urlFor(img).quality(60).auto("format").url()}
                     alt={`Product Image ${index + 1}`}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
                   />
@@ -514,7 +514,7 @@ const ProductDetails: React.FC = () => {
       <ImageModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        images={displayImages.map((img) => urlFor(img).quality(100).url())}
+        images={displayImages.map((img) => urlFor(img).quality(60).url())}
         currentImageIndex={currentImageIndex}
         onPrevious={handlePreviousImage}
         onNext={handleNextImage}

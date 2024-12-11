@@ -8,7 +8,7 @@ import { readClient as client } from '../lib/client';
 import { Product, Category } from '../types/product';
 import './MainContent.css';
 
-const CACHE_EXPIRATION_TIME = 1 * 60 * 60 * 1000;
+const CACHE_EXPIRATION_TIME = 24 * 60 * 60 * 1000;
 
 const MainContent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
