@@ -39,7 +39,7 @@ const StickyCart: React.FC = () => {
           className="flex items-center gap-2 text-white font-medium hover:opacity-90 transition-opacity"
           onClick={() => isCartPage ? scrollToForm() : navigate('/cart')}
         >
-          {isCartPage ? 'CHECKOUT' : 'CART'}
+          {isCartPage ? '' : 'CART'}
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
